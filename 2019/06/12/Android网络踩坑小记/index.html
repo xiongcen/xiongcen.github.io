@@ -11,16 +11,16 @@
 <meta property="og:url" content="http://yoursite.com/2019/06/12/Android网络踩坑小记/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="&amp;#x6458;&amp;#x8981;">
-<meta property="og:image" content="https://github.com/xiongcen/xiongcen.github.io/blob/master/2017/03/11/AndroidAIDL/aidl_2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/xiongcen/xiongcen.github.io/master/2017/03/11/AndroidAIDL/aidl_2.png">
 <meta property="og:image" content="http://yoursite.com/2019/06/12/Android网络踩坑小记/网络踩坑小记_1.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/06/12/Android网络踩坑小记/网络踩坑小记_2.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/06/12/Android网络踩坑小记/网络踩坑小记_3.jpg">
 <meta property="og:image" content="http://yoursite.com/2019/06/12/Android网络踩坑小记/网络踩坑小记_4.jpg">
-<meta property="og:updated_time" content="2019-06-21T06:12:21.503Z">
+<meta property="og:updated_time" content="2019-06-21T06:15:55.435Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="网络踩坑小记">
 <meta name="twitter:description" content="&amp;#x6458;&amp;#x8981;">
-<meta name="twitter:image" content="https://github.com/xiongcen/xiongcen.github.io/blob/master/2017/03/11/AndroidAIDL/aidl_2.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/xiongcen/xiongcen.github.io/master/2017/03/11/AndroidAIDL/aidl_2.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -109,7 +109,7 @@
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">private IKaolaNetAidlInterface mNetServiceProxyWrapper = new IKaolaNetAidlInterface.Stub() {</div><div class="line">        @Override</div><div class="line">        public void execute(String method, String host, String path, String jsonBody, IKaolaRequestListener listener)</div><div class="line">                throws RemoteException {</div><div class="line">            postToNetService(() -&gt; {</div><div class="line">                try {</div><div class="line">                    mNetServiceProxy.execute(method, host, path, jsonBody, listener);</div><div class="line">                } catch (Exception e) {</div><div class="line">                    ExceptionUtils.uploadCatchedException(e);</div><div class="line">                }</div><div class="line">            });</div><div class="line">        }</div><div class="line">    };</div><div class="line">    </div><div class="line">public void postToNetService(final Runnable onConnectRunnable) {</div><div class="line">        mOnConnectRunnables.add(onConnectRunnable);</div><div class="line">        if (mNetServiceProxy == null) {</div><div class="line">			boolean bound = mContext.bindService(new Intent(mContext,</div><div class="line">                            mRemoteNetCallEnable ? KaolaNetService.class : KaolaNetService.KaolaNetLocalService.class),</div><div class="line">                    mServiceConnection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);</div><div class="line"></div><div class="line">            if (!bound) {</div><div class="line">                mHandler.postDelayed(this::testNetService, BIND_TO_NET_SERVICE_RETRY_DELAY);</div><div class="line">            }</div><div class="line">        } else {</div><div class="line">            runAndFlushOnConnectRunnables();</div><div class="line">        }</div><div class="line">    }</div><div class="line"></div><div class="line">private void runAndFlushOnConnectRunnables() {</div><div class="line">    for (Runnable r : mOnConnectRunnables) {</div><div class="line">        r.run();</div><div class="line">    }</div><div class="line">    mOnConnectRunnables.clear();</div><div class="line">}</div></pre></td></tr></table></figure>
 <p>&#x4E0D;&#x4E86;&#x89E3;&#x901A;&#x8FC7;AIDL&#x5B9E;&#x73B0;Binder&#x6D41;&#x7A0B;&#x7684;&#xFF0C;&#x53EF;&#x4EE5;&#x67E5;&#x770B;<a href="https://xiongcen.github.io/2017/03/11/AndroidAIDL/" target="_blank" rel="external">Android&#x4E2D;AIDL&#x7684;&#x521B;&#x5EFA;&#x6D41;&#x7A0B;</a>&#x3002;</p>
-<p>&#x901A;&#x8FC7;&#x4E0B;&#x9762;&#x8FD9;&#x5F20;Binder&#x673A;&#x5236;&#x56FE;&#xFF0C;<br><img src="https://github.com/xiongcen/xiongcen.github.io/blob/master/2017/03/11/AndroidAIDL/aidl_2.png" alt=""><br>&#x6211;&#x4EEC;&#x77E5;&#x9053;&#x751F;&#x6210;&#x7684;IKaolaNetAidlInterface&#x6587;&#x4EF6;&#x4E2D;onTransact&#x65B9;&#x6CD5;&#x662F;&#x5728;&#x8FD0;&#x884C;&#x5728;&#x7EBF;&#x7A0B;&#x6C60;&#x4E2D;&#x3002;&#x4F46;&#x5728;&#x4EE5;&#x4E0A;&#x4EE3;&#x7801;&#x4E2D;&#x6CA1;&#x6709;&#x770B;&#x5230;&#x5173;&#x4E8E;&#x7EBF;&#x7A0B;&#x540C;&#x6B65;&#x7684;&#x4EFB;&#x4F55;&#x4EE3;&#x7801;&#x3002;</p>
+<p>&#x901A;&#x8FC7;&#x4E0B;&#x9762;&#x8FD9;&#x5F20;Binder&#x673A;&#x5236;&#x56FE;&#xFF0C;<br><img src="https://raw.githubusercontent.com/xiongcen/xiongcen.github.io/master/2017/03/11/AndroidAIDL/aidl_2.png" alt=""><br>&#x6211;&#x4EEC;&#x77E5;&#x9053;&#x751F;&#x6210;&#x7684;IKaolaNetAidlInterface&#x6587;&#x4EF6;&#x4E2D;onTransact&#x65B9;&#x6CD5;&#x662F;&#x5728;&#x8FD0;&#x884C;&#x5728;&#x7EBF;&#x7A0B;&#x6C60;&#x4E2D;&#x3002;&#x4F46;&#x5728;&#x4EE5;&#x4E0A;&#x4EE3;&#x7801;&#x4E2D;&#x6CA1;&#x6709;&#x770B;&#x5230;&#x5173;&#x4E8E;&#x7EBF;&#x7A0B;&#x540C;&#x6B65;&#x7684;&#x4EFB;&#x4F55;&#x4EE3;&#x7801;&#x3002;</p>
 <p>&#x56E0;&#x4E3A;&#x6CA1;&#x6709;&#x7EBF;&#x7A0B;&#x540C;&#x6B65;&#xFF0C;&#x65E0;&#x6CD5;&#x4FDD;&#x8BC1;mOnConnectRunnables&#x96C6;&#x5408;add&#x3001;&#x904D;&#x5386;&#x3001;clear&#x7684;&#x6267;&#x884C;&#x987A;&#x5E8F;&#xFF1A;</p>
 <ol>
 <li>add&#x540E;&#x7ACB;&#x523B;&#x88AB;clear&#xFF0C;&#x5BFC;&#x81F4;&#x8BF7;&#x6C42;&#x4E22;&#x5931;&#xFF1B;</li>
@@ -128,7 +128,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/06/12/Android网络踩坑小记/" data-id="cjx5p6nxp000j9gqy6v1i74gl" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/06/12/Android网络踩坑小记/" data-id="cjx5pbewv000lezqy54jt562z" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Network/">Network</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/okhttp/">okhttp</a></li></ul>
