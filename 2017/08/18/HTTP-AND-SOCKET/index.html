@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>对HTTP、Socket的理解 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;#x6458;&amp;#x8981;&amp;#x5BF9;HTTP&amp;#x3001;TCP&amp;#x3001;Socket&amp;#x4E4B;&amp;#x95F4;&amp;#x7684;&amp;#x5173;&amp;#x7CFB;&amp;#x4E00;&amp;#x76F4;&amp;#x61F5;&amp;#x61F5;&amp;#x61C2;&amp;#x61C2;&amp;#xFF0C;&amp;#x7279;&amp;#x6B64;&amp;#x8BB0;&amp;#x5F55;&amp;#x5BF9;&amp;#x5B83;&amp;#x">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对HTTP、Socket的理解">
+<meta property="og:url" content="http://yoursite.com/2017/08/18/HTTP-AND-SOCKET/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="&amp;#x6458;&amp;#x8981;&amp;#x5BF9;HTTP&amp;#x3001;TCP&amp;#x3001;Socket&amp;#x4E4B;&amp;#x95F4;&amp;#x7684;&amp;#x5173;&amp;#x7CFB;&amp;#x4E00;&amp;#x76F4;&amp;#x61F5;&amp;#x61F5;&amp;#x61C2;&amp;#x61C2;&amp;#xFF0C;&amp;#x7279;&amp;#x6B64;&amp;#x8BB0;&amp;#x5F55;&amp;#x5BF9;&amp;#x5B83;&amp;#x">
+<meta property="og:updated_time" content="2019-08-18T06:04:48.616Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="对HTTP、Socket的理解">
+<meta name="twitter:description" content="&amp;#x6458;&amp;#x8981;&amp;#x5BF9;HTTP&amp;#x3001;TCP&amp;#x3001;Socket&amp;#x4E4B;&amp;#x95F4;&amp;#x7684;&amp;#x5173;&amp;#x7CFB;&amp;#x4E00;&amp;#x76F4;&amp;#x61F5;&amp;#x61F5;&amp;#x61C2;&amp;#x61C2;&amp;#xFF0C;&amp;#x7279;&amp;#x6B64;&amp;#x8BB0;&amp;#x5F55;&amp;#x5BF9;&amp;#x5B83;&amp;#x">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-HTTP-AND-SOCKET" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/08/18/HTTP-AND-SOCKET/" class="article-date">
+  <time datetime="2017-08-18T05:53:35.000Z" itemprop="datePublished">2017-08-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Network/">Network</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      对HTTP、Socket的理解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h5 id="&#x6458;&#x8981;"><a href="#&#x6458;&#x8981;" class="headerlink" title="&#x6458;&#x8981;"></a>&#x6458;&#x8981;</h5><p>&#x5BF9;HTTP&#x3001;TCP&#x3001;Socket&#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;&#x4E00;&#x76F4;&#x61F5;&#x61F5;&#x61C2;&#x61C2;&#xFF0C;&#x7279;&#x6B64;&#x8BB0;&#x5F55;&#x5BF9;&#x5B83;&#x4EEC;&#x7684;&#x5173;&#x7CFB;&#x603B;&#x4E00;&#x4E2A;&#x5C0F;&#x7ED3;&#xFF0C;&#x53EF;&#x80FD;&#x6709;&#x4E0D;&#x5BF9;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x4F46;&#x662F;&#x76EE;&#x524D;&#x8BA4;&#x4E3A;&#x6BD4;&#x8F83;&#x6B63;&#x786E;&#x7684;&#x7406;&#x89E3;&#x3002;</p>
+<a id="more"></a>
+<h2 id="TCP-IP&#x534F;&#x8BAE;&#x65CF;&#x5305;&#x62EC;&#x4F46;&#x4E0D;&#x9650;&#x4E8E;&#x4EE5;&#x4E0B;&#x5185;&#x5BB9;"><a href="#TCP-IP&#x534F;&#x8BAE;&#x65CF;&#x5305;&#x62EC;&#x4F46;&#x4E0D;&#x9650;&#x4E8E;&#x4EE5;&#x4E0B;&#x5185;&#x5BB9;" class="headerlink" title="TCP/IP&#x534F;&#x8BAE;&#x65CF;&#x5305;&#x62EC;&#x4F46;&#x4E0D;&#x9650;&#x4E8E;&#x4EE5;&#x4E0B;&#x5185;&#x5BB9;"></a>TCP/IP&#x534F;&#x8BAE;&#x65CF;&#x5305;&#x62EC;&#x4F46;&#x4E0D;&#x9650;&#x4E8E;&#x4EE5;&#x4E0B;&#x5185;&#x5BB9;</h2><p><a href="https://zh.wikipedia.org/wiki/TCP/IP%E5%8D%8F%E8%AE%AE%E6%97%8F#TCP/IP%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B" target="_blank" rel="external">&#x5185;&#x5BB9;&#x6765;&#x81EA;&#x7EF4;&#x57FA;&#x767E;&#x79D1;</a></p>
+<ul>
+<li>&#x5E94;&#x7528;&#x5C42;&#xFF1A;HTTP&#x3001;FTP&#x3001;DNS &#x7B49;</li>
+<li>&#x4F20;&#x8F93;&#x5C42;&#xFF1A;TCP&#x3001;UDP&#x3001;RTP&#x3001;SCTP &#x7B49;</li>
+<li>&#x7F51;&#x7EDC;&#x5C42;&#xFF1A;IP &#x7B49;</li>
+<li>&#x6570;&#x636E;&#x94FE;&#x8DEF;&#x5C42;&#xFF1A;&#x5982;&#x4EE5;&#x592A;&#x7F51;&#x3001;Wi-Fi&#x3001;MPLS &#x7B49;</li>
+</ul>
+<h2 id="HTTP&#x662F;&#x4EC0;&#x4E48;&#xFF1F;"><a href="#HTTP&#x662F;&#x4EC0;&#x4E48;&#xFF1F;" class="headerlink" title="HTTP&#x662F;&#x4EC0;&#x4E48;&#xFF1F;"></a>HTTP&#x662F;&#x4EC0;&#x4E48;&#xFF1F;</h2><p><a href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE" target="_blank" rel="external">&#x5185;&#x5BB9;&#x6765;&#x81EA;&#x7EF4;&#x57FA;&#x767E;&#x79D1;</a></p>
+<p>HTTP&#x662F;&#x4E00;&#x4E2A;&#x5BA2;&#x6237;&#x7AEF;&#xFF08;&#x7528;&#x6237;&#xFF09;&#x548C;&#x670D;&#x52A1;&#x7AEF;&#xFF08;&#x7F51;&#x7AD9;&#xFF09;&#x4E4B;&#x95F4;&#x8BF7;&#x6C42;&#x548C;&#x5E94;&#x7B54;&#x7684;&#x6807;&#x51C6;&#xFF0C;&#x901A;&#x5E38;&#x4F7F;&#x7528;TCP&#x534F;&#x8BAE;&#x3002;(&#x5C3D;&#x7BA1;TCP/IP&#x534F;&#x8BAE;&#x65CF;&#x662F;&#x4E92;&#x8054;&#x7F51;&#x4E0A;&#x6700;&#x6D41;&#x884C;&#x7684;&#x5E94;&#x7528;&#xFF0C;&#x4F46;&#x662F;&#x5728;HTTP&#x534F;&#x8BAE;&#x4E2D;&#x5E76;&#x6CA1;&#x6709;&#x89C4;&#x5B9A;&#x5B83;&#x5FC5;&#x987B;&#x4F7F;&#x7528;&#x6216;&#x5B83;&#x652F;&#x6301;&#x7684;&#x5C42;&#x3002;&#x4E8B;&#x5B9E;&#x4E0A;HTTP&#x53EF;&#x4EE5;&#x5728;&#x4EFB;&#x4F55;&#x4E92;&#x8054;&#x7F51;&#x534F;&#x8BAE;&#x6216;&#x5176;&#x4ED6;&#x7F51;&#x7EDC;&#x4E0A;&#x5B9E;&#x73B0;&#x3002;HTTP&#x5047;&#x5B9A;&#x5176;&#x4E0B;&#x5C42;&#x534F;&#x8BAE;&#x63D0;&#x4F9B;&#x53EF;&#x9760;&#x7684;&#x4F20;&#x8F93;&#x3002;&#x56E0;&#x6B64;&#xFF0C;&#x4EFB;&#x4F55;&#x80FD;&#x591F;&#x63D0;&#x4F9B;&#x8FD9;&#x79CD;&#x4FDD;&#x8BC1;&#x7684;&#x534F;&#x8BAE;&#x90FD;&#x53EF;&#x4EE5;&#x88AB;&#x5176;&#x4F7F;&#x7528;&#xFF0C;&#x6240;&#x4EE5;&#x5176;&#x5728;TCP/IP&#x534F;&#x8BAE;&#x65CF;&#x4F7F;&#x7528;TCP&#x4F5C;&#x4E3A;&#x5176;&#x4F20;&#x8F93;&#x5C42;&#x3002;)</p>
+<h4 id="&#x603B;&#x7ED3;&#xFF1A;"><a href="#&#x603B;&#x7ED3;&#xFF1A;" class="headerlink" title="&#x603B;&#x7ED3;&#xFF1A;"></a>&#x603B;&#x7ED3;&#xFF1A;</h4><ol>
+<li>HTTP&#x901A;&#x5E38;&#x662F;&#x57FA;&#x4E8E;TCP&#x5B9E;&#x73B0;&#x3002;</li>
+</ol>
+<h2 id="Socket&#x662F;&#x4EC0;&#x4E48;&#xFF1F;"><a href="#Socket&#x662F;&#x4EC0;&#x4E48;&#xFF1F;" class="headerlink" title="Socket&#x662F;&#x4EC0;&#x4E48;&#xFF1F;"></a>Socket&#x662F;&#x4EC0;&#x4E48;&#xFF1F;</h2><p><a href="https://baike.baidu.com/item/%E5%A5%97%E6%8E%A5%E5%AD%97/9637606?fromtitle=socket&amp;fromid=281150" target="_blank" rel="external">&#x5185;&#x5BB9;&#x6765;&#x81EA;&#x767E;&#x5EA6;&#x767E;&#x79D1;</a></p>
+<p>&#x5728;&#x7F51;&#x7EDC;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x8BBE;&#x8BA1;&#x65F6;&#xFF0C;&#x7531;&#x4E8E;TCP/IP&#x534F;&#x8BAE;&#x65CF;&#x7684;&#x6838;&#x5FC3;&#x5185;&#x5BB9;&#x88AB;&#x5C01;&#x88C5;&#x5728;&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x4E2D;&#xFF0C;&#x5982;&#x679C;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x8981;&#x4F7F;&#x7528;TCP/IP&#x534F;&#x8BAE;&#x65CF;&#xFF0C;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x7CFB;&#x7EDF;&#x63D0;&#x4F9B;&#x7684;TCP/IP&#x534F;&#x8BAE;&#x65CF;&#x7684;&#x7F16;&#x7A0B;&#x63A5;&#x53E3;&#x6765;&#x5B9E;&#x73B0;&#x3002;&#x5728;Windows&#x73AF;&#x5883;&#x4E0B;&#xFF0C;&#x7F51;&#x7EDC;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x7F16;&#x7A0B;&#x63A5;&#x53E3;&#x79F0;&#x4F5C;Windows Socket&#x3002;&#x4E3A;&#x4E86;&#x652F;&#x6301;&#x7528;&#x6237;&#x5F00;&#x53D1;&#x9762;&#x5411;&#x5E94;&#x7528;&#x7684;&#x901A;&#x4FE1;&#x7A0B;&#x5E8F;&#xFF0C;&#x5927;&#x90E8;&#x5206;&#x7CFB;&#x7EDF;&#x90FD;&#x63D0;&#x4F9B;&#x4E86;&#x4E00;&#x7EC4;&#x57FA;&#x4E8E;TCP&#x6216;&#x8005;UDP&#x7684;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x7F16;&#x7A0B;&#x63A5;&#x53E3;&#xFF08;API&#xFF09;&#xFF0C;&#x8BE5;&#x63A5;&#x53E3;&#x901A;&#x5E38;&#x4EE5;&#x4E00;&#x7EC4;&#x51FD;&#x6570;&#x7684;&#x5F62;&#x5F0F;&#x51FA;&#x73B0;&#xFF0C;&#x4E5F;&#x79F0;&#x4E3A;&#x5957;&#x63A5;&#x5B57;&#xFF08;Socket&#xFF09;&#x3002;</p>
+<h4 id="&#x603B;&#x7ED3;&#xFF1A;-1"><a href="#&#x603B;&#x7ED3;&#xFF1A;-1" class="headerlink" title="&#x603B;&#x7ED3;&#xFF1A;"></a>&#x603B;&#x7ED3;&#xFF1A;</h4><ol>
+<li>Socket&#x53EF;&#x57FA;&#x4E8E;TCP&#x5B9E;&#x73B0;&#xFF0C;&#x4EA6;&#x53EF;&#x57FA;&#x4E8E;UDP&#x5B9E;&#x73B0;&#xFF1B;</li>
+<li>&#x5982;&#x679C;Socket&#x662F;&#x57FA;&#x4E8E;TCP&#x5B9E;&#x73B0;&#xFF0C;&#x90A3;&#x4E48;TCP&#x8FDE;&#x63A5;&#x4E5F;&#x53EB;Socket&#x8FDE;&#x63A5;&#x3002;</li>
+</ol>
+<h2 id="HTTP&#x4E0E;Socket&#x7684;&#x5173;&#x7CFB;"><a href="#HTTP&#x4E0E;Socket&#x7684;&#x5173;&#x7CFB;" class="headerlink" title="HTTP&#x4E0E;Socket&#x7684;&#x5173;&#x7CFB;"></a>HTTP&#x4E0E;Socket&#x7684;&#x5173;&#x7CFB;</h2><p>&#x5F53;HTTP&#x8BF7;&#x6C42;&#x57FA;&#x4E8E;TCP&#x5B9E;&#x73B0;&#x65F6;&#xFF0C;&#x6211;&#x4EEC;&#x8BF4;&#xFF0C;HTTP&#x8BF7;&#x6C42;&#x4F9D;&#x8D56;TCP&#x8FDE;&#x63A5;&#xFF0C;&#x7B49;&#x4EF7;&#x4E8E;&#xFF0C;HTTP&#x8BF7;&#x6C42;&#x4F9D;&#x8D56;&#x57FA;&#x4E8E;TCP&#x5B9E;&#x73B0;&#x7684;Socket&#x8FDE;&#x63A5;&#x3002;</p>
+<h2 id="&#x4EC0;&#x4E48;&#x662F;HTTP&#x8FDE;&#x63A5;&#x3001;HTTP&#x957F;&#x8FDE;&#x63A5;&#x3001;HTTP&#x77ED;&#x8FDE;&#x63A5;"><a href="#&#x4EC0;&#x4E48;&#x662F;HTTP&#x8FDE;&#x63A5;&#x3001;HTTP&#x957F;&#x8FDE;&#x63A5;&#x3001;HTTP&#x77ED;&#x8FDE;&#x63A5;" class="headerlink" title="&#x4EC0;&#x4E48;&#x662F;HTTP&#x8FDE;&#x63A5;&#x3001;HTTP&#x957F;&#x8FDE;&#x63A5;&#x3001;HTTP&#x77ED;&#x8FDE;&#x63A5;?"></a>&#x4EC0;&#x4E48;&#x662F;HTTP&#x8FDE;&#x63A5;&#x3001;HTTP&#x957F;&#x8FDE;&#x63A5;&#x3001;HTTP&#x77ED;&#x8FDE;&#x63A5;?</h2><p>&#x5148;&#x4E86;&#x89E3;&#x4E00;&#x4E0B;HTTP&#x8FDE;&#x63A5;&#x65B9;&#x5F0F;&#x8FDB;&#x5316;&#x53F2;&#xFF1A;</p>
+<h5 id="HTTP-0-9&#x65F6;&#x4EE3;&#xFF1A;&#x77ED;&#x8FDE;&#x63A5;"><a href="#HTTP-0-9&#x65F6;&#x4EE3;&#xFF1A;&#x77ED;&#x8FDE;&#x63A5;" class="headerlink" title="HTTP/0.9&#x65F6;&#x4EE3;&#xFF1A;&#x77ED;&#x8FDE;&#x63A5;"></a>HTTP/0.9&#x65F6;&#x4EE3;&#xFF1A;&#x77ED;&#x8FDE;&#x63A5;</h5><p>&#x6BCF;&#x4E2A;HTTP&#x8BF7;&#x6C42;&#x90FD;&#x8981;&#x7ECF;&#x5386;&#x4E00;&#x6B21;DNS&#x89E3;&#x6790;&#x3001;&#x4E09;&#x6B21;&#x63E1;&#x624B;&#x3001;&#x4F20;&#x8F93;&#x548C;&#x56DB;&#x6B21;&#x6325;&#x624B;&#x3002;&#x53CD;&#x590D;&#x521B;&#x5EFA;&#x548C;&#x65AD;&#x5F00;TCP&#x8FDE;&#x63A5;&#x7684;&#x5F00;&#x9500;&#x5DE8;&#x5927;&#x3002;</p>
+<h5 id="HTTP-1-0&#x65F6;&#x4EE3;&#xFF1A;&#x6301;&#x4E45;&#x8FDE;&#x63A5;-&#x5373;-&#x4E00;&#x4E2A;TCP&#x8FDE;&#x63A5;&#x670D;&#x52A1;&#x591A;&#x6B21;&#x8BF7;&#x6C42;-&#x6982;&#x5FF5;&#x63D0;&#x51FA;"><a href="#HTTP-1-0&#x65F6;&#x4EE3;&#xFF1A;&#x6301;&#x4E45;&#x8FDE;&#x63A5;-&#x5373;-&#x4E00;&#x4E2A;TCP&#x8FDE;&#x63A5;&#x670D;&#x52A1;&#x591A;&#x6B21;&#x8BF7;&#x6C42;-&#x6982;&#x5FF5;&#x63D0;&#x51FA;" class="headerlink" title="HTTP/1.0&#x65F6;&#x4EE3;&#xFF1A;&#x6301;&#x4E45;&#x8FDE;&#x63A5;(&#x5373;:&#x4E00;&#x4E2A;TCP&#x8FDE;&#x63A5;&#x670D;&#x52A1;&#x591A;&#x6B21;&#x8BF7;&#x6C42;)&#x6982;&#x5FF5;&#x63D0;&#x51FA;"></a>HTTP/1.0&#x65F6;&#x4EE3;&#xFF1A;&#x6301;&#x4E45;&#x8FDE;&#x63A5;(&#x5373;:&#x4E00;&#x4E2A;TCP&#x8FDE;&#x63A5;&#x670D;&#x52A1;&#x591A;&#x6B21;&#x8BF7;&#x6C42;)&#x6982;&#x5FF5;&#x63D0;&#x51FA;</h5><p>&#x652F;&#x6301;&#x5728;&#x8BF7;&#x6C42;header&#x4E2D;&#x643A;&#x5E26;Connection: Keep-Alive&#xFF0C;&#x5373;&#x5728;&#x5411;&#x670D;&#x52A1;&#x7AEF;&#x8BF7;&#x6C42;&#x6301;&#x4E45;&#x8FDE;&#x63A5;&#x3002;&#x5982;&#x679C;&#x670D;&#x52A1;&#x7AEF;&#x63A5;&#x53D7;&#x6301;&#x4E45;&#x8FDE;&#x63A5;&#xFF0C;&#x5219;&#x4F1A;&#x5728;&#x54CD;&#x5E94;header&#x4E2D;&#x540C;&#x6837;&#x643A;&#x5E26;Connection: Keep-Alive&#xFF0C;&#x8FD9;&#x6837;&#x5BA2;&#x6237;&#x7AEF;&#x4FBF;&#x4F1A;&#x7EE7;&#x7EED;&#x4F7F;&#x7528;&#x540C;&#x4E00;&#x4E2A;TCP&#x8FDE;&#x63A5;&#x53D1;&#x9001;&#x63A5;&#x4E0B;&#x6765;&#x7684;&#x82E5;&#x5E72;&#x8BF7;&#x6C42;&#x3002;&#xFF08;Keep-Alive&#x7684;&#x9ED8;&#x8BA4;&#x53C2;&#x6570;&#x662F;[timout=5, max=100]&#xFF0C;&#x5373;&#x4E00;&#x4E2A;TCP&#x8FDE;&#x63A5;&#x53EF;&#x4EE5;&#x670D;&#x52A1;&#x81F3;&#x591A;5&#x79D2;&#x5185;&#x7684;100&#x6B21;&#x8BF7;&#x6C42;&#xFF09;</p>
+<h5 id="HTTP-1-1&#x65F6;&#x4EE3;&#xFF1A;&#x6301;&#x4E45;&#x8FDE;&#x63A5;&#x6210;&#x4E3A;&#x9ED8;&#x8BA4;&#x7684;&#x8FDE;&#x63A5;&#x65B9;&#x5F0F;&#xFF1B;&#x63D0;&#x51FA;pipelining&#x6982;&#x5FF5;"><a href="#HTTP-1-1&#x65F6;&#x4EE3;&#xFF1A;&#x6301;&#x4E45;&#x8FDE;&#x63A5;&#x6210;&#x4E3A;&#x9ED8;&#x8BA4;&#x7684;&#x8FDE;&#x63A5;&#x65B9;&#x5F0F;&#xFF1B;&#x63D0;&#x51FA;pipelining&#x6982;&#x5FF5;" class="headerlink" title="HTTP/1.1&#x65F6;&#x4EE3;&#xFF1A;&#x6301;&#x4E45;&#x8FDE;&#x63A5;&#x6210;&#x4E3A;&#x9ED8;&#x8BA4;&#x7684;&#x8FDE;&#x63A5;&#x65B9;&#x5F0F;&#xFF1B;&#x63D0;&#x51FA;pipelining&#x6982;&#x5FF5;"></a>HTTP/1.1&#x65F6;&#x4EE3;&#xFF1A;&#x6301;&#x4E45;&#x8FDE;&#x63A5;&#x6210;&#x4E3A;&#x9ED8;&#x8BA4;&#x7684;&#x8FDE;&#x63A5;&#x65B9;&#x5F0F;&#xFF1B;&#x63D0;&#x51FA;pipelining&#x6982;&#x5FF5;</h5><p>&#x6301;&#x4E45;&#x8FDE;&#x63A5;&#x4E0B;&#x4E00;&#x4E2A;&#x8FDE;&#x63A5;&#x4E2D;&#x7684;&#x8BF7;&#x6C42;&#x4ECD;&#x7136;&#x662F;&#x4E32;&#x884C;&#x7684;&#xFF0C;&#x5982;&#x679C;&#x67D0;&#x4E2A;&#x8BF7;&#x6C42;&#x51FA;&#x73B0;&#x7F51;&#x7EDC;&#x963B;&#x585E;&#x7B49;&#x95EE;&#x9898;&#xFF0C;&#x4F1A;&#x5BFC;&#x81F4;&#x540C;&#x4E00;&#x6761;&#x8FDE;&#x63A5;&#x4E0A;&#x7684;&#x540E;&#x7EED;&#x8BF7;&#x6C42;&#x88AB;&#x963B;&#x585E;&#x3002;</p>
+<p>&#x56E0;&#x6B64;&#x63D0;&#x51FA;&#x4E86;pipelining&#x6982;&#x5FF5;&#xFF0C;&#x5373;&#x5BA2;&#x6237;&#x7AEF;&#x53EF;&#x4EE5;&#x5728;&#x4E00;&#x4E2A;&#x8BF7;&#x6C42;&#x53D1;&#x9001;&#x5B8C;&#x6210;&#x540E;&#x4E0D;&#x7B49;&#x5F85;&#x54CD;&#x5E94;&#x4FBF;&#x76F4;&#x63A5;&#x53D1;&#x8D77;&#x7B2C;&#x4E8C;&#x4E2A;&#x8BF7;&#x6C42;&#xFF0C;&#x670D;&#x52A1;&#x7AEF;&#x5728;&#x8FD4;&#x56DE;&#x54CD;&#x5E94;&#x65F6;&#x4F1A;&#x6309;&#x8BF7;&#x6C42;&#x5230;&#x8FBE;&#x7684;&#x987A;&#x5E8F;&#x4F9D;&#x6B21;&#x8FD4;&#x56DE;&#xFF0C;&#x8FD9;&#x6837;&#x5C31;&#x6781;&#x5927;&#x5730;&#x964D;&#x4F4E;&#x4E86;&#x5EF6;&#x8FDF;&#x3002;</p>
+<h5 id="&#x5728;HTTP-2-0&#x65F6;&#x4EE3;&#xFF1A;&#x63D0;&#x51FA;&#x4E86;multiplexing-&#x5373;-&#x591A;&#x8DEF;&#x590D;&#x7528;-&#x6280;&#x672F;"><a href="#&#x5728;HTTP-2-0&#x65F6;&#x4EE3;&#xFF1A;&#x63D0;&#x51FA;&#x4E86;multiplexing-&#x5373;-&#x591A;&#x8DEF;&#x590D;&#x7528;-&#x6280;&#x672F;" class="headerlink" title="&#x5728;HTTP/2.0&#x65F6;&#x4EE3;&#xFF1A;&#x63D0;&#x51FA;&#x4E86;multiplexing(&#x5373;:&#x591A;&#x8DEF;&#x590D;&#x7528;)&#x6280;&#x672F;"></a>&#x5728;HTTP/2.0&#x65F6;&#x4EE3;&#xFF1A;&#x63D0;&#x51FA;&#x4E86;multiplexing(&#x5373;:&#x591A;&#x8DEF;&#x590D;&#x7528;)&#x6280;&#x672F;</h5><p>&#x80FD;&#x591F;&#x8BA9;&#x591A;&#x4E2A;&#x8BF7;&#x6C42;&#x548C;&#x54CD;&#x5E94;&#x7684;&#x4F20;&#x8F93;&#x5B8C;&#x5168;&#x6DF7;&#x6742;&#x5728;&#x4E00;&#x8D77;&#x8FDB;&#x884C;&#xFF0C;&#x901A;&#x8FC7;streamId&#x6765;&#x4E92;&#x76F8;&#x533A;&#x522B;&#x3002;&#x8FD9;&#x5F7B;&#x5E95;&#x89E3;&#x51B3;&#x4E86;&#x4E32;&#x884C;&#x963B;&#x585E;&#x95EE;&#x9898;&#xFF0C;&#x540C;&#x65F6;&#x8FD8;&#x5141;&#x8BB8;&#x7ED9;&#x6BCF;&#x4E2A;&#x8BF7;&#x6C42;&#x8BBE;&#x7F6E;&#x4F18;&#x5148;&#x7EA7;&#xFF0C;&#x670D;&#x52A1;&#x7AEF;&#x4F1A;&#x5148;&#x54CD;&#x5E94;&#x4F18;&#x5148;&#x7EA7;&#x9AD8;&#x7684;&#x8BF7;&#x6C42;&#x3002;</p>
+<h4 id="&#x5B9A;&#x4E49;"><a href="#&#x5B9A;&#x4E49;" class="headerlink" title="&#x5B9A;&#x4E49;"></a>&#x5B9A;&#x4E49;</h4><p>HTTP&#x8FDE;&#x63A5;&#xFF1A;&#x4EE5;HTTP&#x534F;&#x8BAE;&#x4E3A;&#x901A;&#x4FE1;&#x534F;&#x8BAE;&#x7684;TCP&#x8FDE;&#x63A5;&#x3002;<br>HTTP&#x77ED;&#x8FDE;&#x63A5;&#xFF1A;&#x4EE5;HTTP&#x534F;&#x8BAE;&#x4E3A;&#x901A;&#x4FE1;&#x534F;&#x8BAE;&#x7684;&#xFF0C;&#x8BF7;&#x6C42;&#x4E00;&#x6B21;&#x5C31;&#x65AD;&#x5F00;&#x7684;TCP&#x8FDE;&#x63A5;&#x3002;<br>HTTP&#x957F;&#x8FDE;&#x63A5;&#xFF1A;&#x4EE5;HTTP&#x534F;&#x8BAE;&#x4E3A;&#x901A;&#x4FE1;&#x534F;&#x8BAE;&#x7684;&#xFF0C;&#x8BF7;&#x6C42;&#x591A;&#x6B21;&#x624D;&#x65AD;&#x5F00;&#x7684;TCP&#x8FDE;&#x63A5;&#x3002;</p>
+<h4 id="&#x603B;&#x7ED3;&#xFF1A;-2"><a href="#&#x603B;&#x7ED3;&#xFF1A;-2" class="headerlink" title="&#x603B;&#x7ED3;&#xFF1A;"></a>&#x603B;&#x7ED3;&#xFF1A;</h4><ol>
+<li>TCP&#x8FDE;&#x63A5;&#x6CA1;&#x6709;&#x957F;&#x77ED;&#x4E4B;&#x5206;&#xFF0C;&#x56E0;&#x4E3A;&#x4F7F;&#x7528;&#x65B9;&#x5F0F;&#x7684;&#x4E0D;&#x540C;&#x9020;&#x6210;&#x4E86;HTTP&#x8FDE;&#x63A5;&#x7684;&#x957F;&#x77ED;&#x4E4B;&#x5206;&#xFF1B;</li>
+<li>&#x5F53;Socket&#x57FA;&#x4E8E;TCP&#x5B9E;&#x73B0;&#x65F6;&#xFF0C;Socket&#x8FDE;&#x63A5;(&#x5373;:TCP&#x8FDE;&#x63A5;&#xFF09;&#x6CA1;&#x6709;&#x957F;&#x77ED;&#x4E4B;&#x5206;&#xFF1B;</li>
+<li>&#x7406;&#x60F3;&#x72B6;&#x6001;&#x4E0B;&#xFF0C;&#x8FDE;&#x63A5;&#x4E00;&#x65E6;&#x5EFA;&#x7ACB;&#xFF0C;&#x5728;&#x901A;&#x4FE1;&#x53CC;&#x65B9;&#x4E2D;&#x7684;&#x4EFB;&#x4F55;&#x4E00;&#x65B9;&#x4E3B;&#x52A8;&#x5173;&#x95ED;&#x8FDE;&#x63A5;&#x4E4B;&#x524D;&#xFF0C;&#x8FDE;&#x63A5;&#x90FD;&#x5C06;&#x88AB;&#x4E00;&#x76F4;&#x4FDD;&#x6301;&#x4E0B;&#x53BB;&#xFF0C;&#x4F46;&#x7531;&#x4E8E;&#x5404;&#x79CD;&#x73AF;&#x5883;&#x56E0;&#x7D20;&#x53EF;&#x80FD;&#x4F1A;&#x4F7F;&#x8FDE;&#x63A5;&#x65AD;&#x5F00;&#xFF0C;&#x6BD4;&#x5982;&#x8BF4;&#xFF1A;&#x670D;&#x52A1;&#x5668;&#x7AEF;&#x6216;&#x5BA2;&#x6237;&#x7AEF;&#x4E3B;&#x673A;down&#x4E86;&#xFF0C;&#x7F51;&#x7EDC;&#x6545;&#x969C;&#xFF0C;&#x6216;&#x8005;&#x4E24;&#x8005;&#x4E4B;&#x95F4;&#x957F;&#x65F6;&#x95F4;&#x6CA1;&#x6709;&#x6570;&#x636E;&#x4F20;&#x8F93;&#xFF0C;&#x7F51;&#x7EDC;&#x9632;&#x706B;&#x5899;&#x53EF;&#x80FD;&#x4F1A;&#x65AD;&#x5F00;&#x8BE5;&#x8FDE;&#x63A5;&#x4EE5;&#x91CA;&#x653E;&#x7F51;&#x7EDC;&#x8D44;&#x6E90;&#x3002;</li>
+</ol>
+<h2 id="&#x8FDE;&#x63A5;&#x7684;&#x901A;&#x4FE1;&#x53CC;&#x65B9;&#x662F;&#x5426;&#x90FD;&#x53EF;&#x4EE5;&#x968F;&#x65F6;&#x53D1;&#x9001;&#x6570;&#x636E;&#xFF1F;"><a href="#&#x8FDE;&#x63A5;&#x7684;&#x901A;&#x4FE1;&#x53CC;&#x65B9;&#x662F;&#x5426;&#x90FD;&#x53EF;&#x4EE5;&#x968F;&#x65F6;&#x53D1;&#x9001;&#x6570;&#x636E;&#xFF1F;" class="headerlink" title="&#x8FDE;&#x63A5;&#x7684;&#x901A;&#x4FE1;&#x53CC;&#x65B9;&#x662F;&#x5426;&#x90FD;&#x53EF;&#x4EE5;&#x968F;&#x65F6;&#x53D1;&#x9001;&#x6570;&#x636E;&#xFF1F;"></a>&#x8FDE;&#x63A5;&#x7684;&#x901A;&#x4FE1;&#x53CC;&#x65B9;&#x662F;&#x5426;&#x90FD;&#x53EF;&#x4EE5;&#x968F;&#x65F6;&#x53D1;&#x9001;&#x6570;&#x636E;&#xFF1F;</h2><p>&#x4E0A;&#x9762;&#x6211;&#x4EEC;&#x63D0;&#x5230;&#x4E86;&#x597D;&#x51E0;&#x79CD;&#x8FDE;&#x63A5;&#xFF0C;&#x5206;&#x522B;&#x662F;HTTP&#x8FDE;&#x63A5;&#xFF0C;TCP&#x8FDE;&#x63A5;&#x3001;Socket&#x8FDE;&#x63A5;&#xFF0C;&#x4E00;&#x822C;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x6211;&#x4EEC;&#x8BA4;&#x4E3A;HTTP&#x8FDE;&#x63A5;&#x662F;&#x4EE5;HTTP&#x534F;&#x8BAE;&#x4E3A;&#x901A;&#x4FE1;&#x534F;&#x8BAE;&#x7684;TCP&#x8FDE;&#x63A5;&#xFF0C;TCP&#x8FDE;&#x63A5;&#x4E5F;&#x53EF;&#x4EE5;&#x53EB;Socket&#x8FDE;&#x63A5;&#x3002;</p>
+<p>&#x672C;&#x8D28;&#x4E0A;&#xFF0C;&#x6211;&#x4EEC;&#x8BA4;&#x4E3A;Socket&#x8FDE;&#x63A5;&#x7684;&#x901A;&#x4FE1;&#x53CC;&#x65B9;&#x53D1;&#x9001;&#x6D88;&#x606F;&#x5E76;&#x6CA1;&#x6709;&#x5148;&#x540E;&#x7684;&#x9650;&#x5236;&#xFF0C;&#x901A;&#x4FE1;&#x53CC;&#x65B9;&#x4E2D;&#x7684;&#x4EFB;&#x4F55;&#x4E00;&#x65B9;&#x53EF;&#x4EE5;&#x968F;&#x65F6;&#x5411;&#x53E6;&#x4E00;&#x65B9;&#x53D1;&#x9001;&#x6D88;&#x606F;&#x3002;</p>
+<p>&#x4F46;&#x5F53;&#x4EE5;HTTP&#x534F;&#x8BAE;&#x4E3A;&#x901A;&#x4FE1;&#x534F;&#x8BAE;&#x65F6;&#xFF0C;&#x53EA;&#x6709;&#x5BA2;&#x6237;&#x7AEF;&#x53D1;&#x8D77;&#x8BF7;&#x6C42;&#x540E;&#x670D;&#x52A1;&#x7AEF;&#x624D;&#x4F1A;&#x54CD;&#x5E94;&#xFF0C;&#x670D;&#x52A1;&#x7AEF;&#x662F;&#x65E0;&#x6CD5;&#x4E3B;&#x52A8;&#x5411;&#x5BA2;&#x6237;&#x7AEF;&#x53D1;&#x6D88;&#x606F;&#x7684;&#x3002;</p>
+<p>HTTP/2.0&#x5F00;&#x59CB;&#xFF0C;&#x63D0;&#x4F9B;&#x4E86;&#x4E00;&#x79CD;&#x65B0;&#x6280;&#x672F;&#x2014;&#x670D;&#x52A1;&#x5668;&#x63A8;&#x9001;&#xFF08;server push&#xFF09;&#xFF0C;&#x8FD9;&#x4E2A;&#x529F;&#x80FD;&#x4E5F;&#x662F;&#x5EFA;&#x7ACB;&#x5728;&#x5BA2;&#x6237;&#x7AEF;&#x53D1;&#x8D77;&#x8BF7;&#x6C42;&#x540E;&#x670D;&#x52A1;&#x7AEF;&#x624D;&#x4F1A;&#x54CD;&#x5E94;&#xFF0C;&#x53EA;&#x662F;&#x5BF9;&#x54CD;&#x5E94;&#x7684;&#x5185;&#x5BB9;&#x505A;&#x4E86;&#x4F18;&#x5316;&#x3002;</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/08/18/HTTP-AND-SOCKET/" data-id="cjzgkilzg000rgwqythd0tlui" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/05/24/Java类加载顺序/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          记一次踩坑：Java类加载顺序
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/05/AndroidIntentFlag/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">关于设置IntentFlag的一些总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AIDL/">AIDL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Canvas/">Canvas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ClassLoader/">ClassLoader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HttpClient/">HttpClient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HttpResponseCache/">HttpResponseCache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HttpURLConnection/">HttpURLConnection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPC/">IPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IntentFlag/">IntentFlag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java基础/">Java基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java并发/">Java并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View/">View</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebView/">WebView</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android-sharedUserId/">android:sharedUserId</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cache/">cache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/launchmode/">launchmode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/okhttp/">okhttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push/">push</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事件分发/">事件分发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/图片加载/">图片加载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基本数据类型/">基本数据类型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/开源库/">开源库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/消息机制/">消息机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/移位操作符/">移位操作符</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络/">网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络加载/">网络加载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络库/">网络库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义View/">自定义View</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/阻塞队列/">阻塞队列</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AIDL/" style="font-size: 10px;">AIDL</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Canvas/" style="font-size: 10px;">Canvas</a> <a href="/tags/ClassLoader/" style="font-size: 10px;">ClassLoader</a> <a href="/tags/HTTP/" style="font-size: 12.5px;">HTTP</a> <a href="/tags/HttpClient/" style="font-size: 10px;">HttpClient</a> <a href="/tags/HttpResponseCache/" style="font-size: 10px;">HttpResponseCache</a> <a href="/tags/HttpURLConnection/" style="font-size: 10px;">HttpURLConnection</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/IntentFlag/" style="font-size: 10px;">IntentFlag</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Java基础/" style="font-size: 10px;">Java基础</a> <a href="/tags/Java并发/" style="font-size: 12.5px;">Java并发</a> <a href="/tags/Network/" style="font-size: 10px;">Network</a> <a href="/tags/View/" style="font-size: 12.5px;">View</a> <a href="/tags/WebView/" style="font-size: 10px;">WebView</a> <a href="/tags/android-sharedUserId/" style="font-size: 10px;">android:sharedUserId</a> <a href="/tags/cache/" style="font-size: 10px;">cache</a> <a href="/tags/launchmode/" style="font-size: 10px;">launchmode</a> <a href="/tags/okhttp/" style="font-size: 10px;">okhttp</a> <a href="/tags/push/" style="font-size: 10px;">push</a> <a href="/tags/事件分发/" style="font-size: 10px;">事件分发</a> <a href="/tags/图片加载/" style="font-size: 12.5px;">图片加载</a> <a href="/tags/基本数据类型/" style="font-size: 10px;">基本数据类型</a> <a href="/tags/开源库/" style="font-size: 17.5px;">开源库</a> <a href="/tags/消息机制/" style="font-size: 10px;">消息机制</a> <a href="/tags/移位操作符/" style="font-size: 10px;">移位操作符</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a> <a href="/tags/网络加载/" style="font-size: 10px;">网络加载</a> <a href="/tags/网络库/" style="font-size: 10px;">网络库</a> <a href="/tags/自定义View/" style="font-size: 10px;">自定义View</a> <a href="/tags/阻塞队列/" style="font-size: 10px;">阻塞队列</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/06/12/Android网络踩坑小记/">网络踩坑小记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/03/onSaveInstanceState/">记一次踩坑：onSaveInstanceState &amp; onRestoreInstanceState过程分析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/11/Android坐标系详解/">Android坐标系详解</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/24/Java类加载顺序/">记一次踩坑：Java类加载顺序</a>
+          </li>
+        
+          <li>
+            <a href="/2017/08/18/HTTP-AND-SOCKET/">对HTTP、Socket的理解</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 xiongcen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
