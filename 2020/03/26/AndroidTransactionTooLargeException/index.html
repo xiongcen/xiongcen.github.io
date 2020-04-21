@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>TransactionTooLargeException问题分析 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;#x6458;&amp;#x8981;TransactionTooLargeException &amp;#x6E90;&amp;#x7801;&amp;#x5206;&amp;#x6790;&amp;#x4E0E;&amp;#x89E3;&amp;#x51B3;&amp;#x65B9;&amp;#x6848;&amp;#x601D;&amp;#x8003;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TransactionTooLargeException问题分析">
+<meta property="og:url" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="&amp;#x6458;&amp;#x8981;TransactionTooLargeException &amp;#x6E90;&amp;#x7801;&amp;#x5206;&amp;#x6790;&amp;#x4E0E;&amp;#x89E3;&amp;#x51B3;&amp;#x65B9;&amp;#x6848;&amp;#x601D;&amp;#x8003;">
+<meta property="og:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/代码跟踪图1.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/代码跟踪图4.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/代码跟踪图5.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/代码跟踪图8.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/代码跟踪图9.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/代码跟踪图12_2.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/代码跟踪图13.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/流程示意图.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/流程示意图2.jpg">
+<meta property="og:updated_time" content="2020-04-21T08:36:57.540Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TransactionTooLargeException问题分析">
+<meta name="twitter:description" content="&amp;#x6458;&amp;#x8981;TransactionTooLargeException &amp;#x6E90;&amp;#x7801;&amp;#x5206;&amp;#x6790;&amp;#x4E0E;&amp;#x89E3;&amp;#x51B3;&amp;#x65B9;&amp;#x6848;&amp;#x601D;&amp;#x8003;">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/代码跟踪图1.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-AndroidTransactionTooLargeException" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/03/26/AndroidTransactionTooLargeException/" class="article-date">
+  <time datetime="2020-03-26T07:08:05.000Z" itemprop="datePublished">2020-03-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      TransactionTooLargeException问题分析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h5 id="&#x6458;&#x8981;"><a href="#&#x6458;&#x8981;" class="headerlink" title="&#x6458;&#x8981;"></a>&#x6458;&#x8981;</h5><p><code>TransactionTooLargeException</code> &#x6E90;&#x7801;&#x5206;&#x6790;&#x4E0E;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#x601D;&#x8003;</p>
+<a id="more"></a>
+<h4 id="&#x95EE;&#x9898;&#x5F02;&#x5E38;"><a href="#&#x95EE;&#x9898;&#x5F02;&#x5E38;" class="headerlink" title="&#x95EE;&#x9898;&#x5F02;&#x5E38;"></a>&#x95EE;&#x9898;&#x5F02;&#x5E38;</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">Caused by: android.os.TransactionTooLargeException: data parcel size 1105388 bytes</div><div class="line">       at android.os.BinderProxy.transactNative(Native Method)</div><div class="line">       at android.os.BinderProxy.transact(BinderProxy.java:526)</div><div class="line">       at android.app.IActivityTaskManager$Stub$Proxy.startActivity(IActivityTaskManager.java:3884)</div><div class="line">       at android.app.Instrumentation.execStartActivity(Instrumentation.java:1731)</div><div class="line">       at android.app.Activity.startActivityForResult(Activity.java:5363) </div><div class="line">       at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:767) </div><div class="line">       at android.app.Activity.startActivityForResult(Activity.java:5304) </div><div class="line">       at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:754) </div><div class="line">       at com.kaola.modules.brick.component.BaseActivity.startActivityForResult(BaseActivity.java:486) </div><div class="line">       at com.kaola.core.center.gaia.RealGaiaInvoker.startActivityForResult(RealGaiaInvoker.java:95) </div><div class="line">       at com.kaola.core.center.gaia.RealGaiaInvoker.access$600(RealGaiaInvoker.java:27) </div><div class="line">       at com.kaola.core.center.gaia.RealGaiaInvoker$1.run(RealGaiaInvoker.java:244) </div><div class="line">       at com.kaola.core.center.gaia.RealGaiaInvoker.invokeActivityForResult(RealGaiaInvoker.java:251) </div><div class="line">       at com.kaola.core.center.gaia.RealGaiaInvoker.access$200(RealGaiaInvoker.java:27) </div><div class="line">       at com.kaola.core.center.gaia.RealGaiaInvoker$GaiaAsyncInvoker.run(RealGaiaInvoker.java:172) </div><div class="line">       at com.kaola.core.center.gaia.GaiaDispatcher.enqueueInvokeSync(GaiaDispatcher.java:39) </div><div class="line">       at com.kaola.core.center.gaia.RealGaiaInvoker.invokeSync(RealGaiaInvoker.java:87) </div><div class="line">       at com.kaola.core.center.router.GaiaRouterProxy.start(GaiaRouterProxy.java:56) </div><div class="line">       at com.kaola.core.center.router.BaseRouter.start(BaseRouter.java:74) </div><div class="line">       at com.kaola.core.center.router.RouterRequestBuilder.startForResult(RouterRequestBuilder.java:195) </div><div class="line">       at com.kaola.core.center.router.RouterRequestBuilder.startForResult(RouterRequestBuilder.java:190) </div><div class="line">       at com.kaola.sku.SkuActivityDispatcher.start(SkuActivityDispatcher.kt:74) </div><div class="line"></div><div class="line">       ......</div></pre></td></tr></table></figure>
+<h4 id="&#x95EE;&#x9898;&#x5206;&#x6790;"><a href="#&#x95EE;&#x9898;&#x5206;&#x6790;" class="headerlink" title="&#x95EE;&#x9898;&#x5206;&#x6790;"></a>&#x95EE;&#x9898;&#x5206;&#x6790;</h4><h5 id="1-&#x5148;&#x67E5;&#x770B;&#x5B98;&#x65B9;&#x6587;&#x6863;&#x5BF9;-TransactionTooLargeException-&#x7684;&#x4ECB;&#x7ECD;"><a href="#1-&#x5148;&#x67E5;&#x770B;&#x5B98;&#x65B9;&#x6587;&#x6863;&#x5BF9;-TransactionTooLargeException-&#x7684;&#x4ECB;&#x7ECD;" class="headerlink" title="1.&#x5148;&#x67E5;&#x770B;&#x5B98;&#x65B9;&#x6587;&#x6863;&#x5BF9; TransactionTooLargeException &#x7684;&#x4ECB;&#x7ECD;"></a>1.&#x5148;&#x67E5;&#x770B;&#x5B98;&#x65B9;&#x6587;&#x6863;&#x5BF9; <code>TransactionTooLargeException</code> &#x7684;&#x4ECB;&#x7ECD;</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">If the arguments or the return value are too large to fit in the transaction buffer, then the call will fail and TransactionTooLargeException will be thrown.</div></pre></td></tr></table></figure>
+<p>&#x8BD1;&#xFF1A;&#x8DE8;&#x8FDB;&#x7A0B;&#x901A;&#x4FE1;&#x4F20;&#x9012;/&#x8FD4;&#x56DE;&#x7684;&#x6570;&#x636E;&#x592A;&#x5927;&#xFF0C;&#x8D85;&#x51FA; transaction buffer &#x9650;&#x5236;&#xFF0C;&#x629B;&#x51FA; TransactionTooLargeException &#x5F02;&#x5E38;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">The Binder transaction buffer has a limited fixed size, currently 1Mb, which is shared by all transactions in progress for the process. Consequently this exception can be thrown when there are many transactions in progress even when most of the individual transactions are of moderate size.</div></pre></td></tr></table></figure>
+<p>&#x8BD1;&#xFF1A;<code>Binder transaction buffer</code> &#x6709; <code>1Mb</code> &#x7684;&#x5927;&#x5C0F;&#x9650;&#x5236;&#xFF0C;&#x5E76;&#x4E14;&#x8FD9;&#x4E2A;&#x7A7A;&#x95F4;&#x63D0;&#x4F9B;&#x7ED9;&#x4E00;&#x4E2A;&#x8FDB;&#x7A0B;&#x91CC;&#x6240;&#x6709; <code>transaction</code> &#x4F7F;&#x7528;&#x3002;&#x6240;&#x4EE5;&#x5F53;&#x7EDD;&#x5927;&#x591A;&#x6570;&#x5355;&#x72EC;&#x7684; <code>transaction</code> &#x8C03;&#x7528;&#x7684;&#x53C2;&#x6570;&#x5927;&#x5C0F;&#x5E76;&#x4E0D;&#x5927;&#x4F46;&#x662F;&#x6570;&#x91CF;&#x5F88;&#x591A;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4E5F;&#x4F1A;&#x629B;&#x51FA;&#x8FD9;&#x4E2A;&#x5F02;&#x5E38;&#x3002;</p>
+<h5 id="2-&#x5206;&#x6790;&#x5806;&#x6808;"><a href="#2-&#x5206;&#x6790;&#x5806;&#x6808;" class="headerlink" title="2.&#x5206;&#x6790;&#x5806;&#x6808;"></a>2.&#x5206;&#x6790;&#x5806;&#x6808;</h5><p>&#x2460;.<code>Activity.startActivityForResult -&gt; Instrumentation.execStartActivity</code><br><img src="/2020/03/26/AndroidTransactionTooLargeException/&#x4EE3;&#x7801;&#x8DDF;&#x8E2A;&#x56FE;1.jpg" alt=""></p>
+<p>&#x2461;.<code>ActivityManagerNative.getDefault()</code><br><img src="/2020/03/26/AndroidTransactionTooLargeException/&#x4EE3;&#x7801;&#x8DDF;&#x8E2A;&#x56FE;4.jpg" alt=""></p>
+<p>&#x2462;.<code>ServiceManager.getService(&quot;activity&quot;)</code> &#x5206;&#x6790;&#xFF0C;&#x6700;&#x7EC8;&#x83B7;&#x53D6;&#x7684; <code>IBinder</code> &#x4E3A; <code>BinderProxy</code>.</p>
+<p>&#x5373;&#xFF1A;<code>ServiceManager.getService(&quot;activity&quot;) -&gt;
+ServiceManagerNative.asInterface(new BinderProxy()).getService(&quot;activity&quot;) -&gt;
+new ServiceManagerProxy(new BinderProxy()).getService(&quot;activity&quot;)</code><br><img src="/2020/03/26/AndroidTransactionTooLargeException/&#x4EE3;&#x7801;&#x8DDF;&#x8E2A;&#x56FE;5.jpg" alt=""><br><img src="/2020/03/26/AndroidTransactionTooLargeException/&#x4EE3;&#x7801;&#x8DDF;&#x8E2A;&#x56FE;8.jpg" alt=""></p>
+<p>&#x2463;.&#x56DE;&#x5230;&#x2461;&#xFF0C;&#x53EF;&#x4EE5;&#x77E5;&#x9053; <code>ActivityManagerProxy</code> &#x7684;&#x6784;&#x9020;&#x65B9;&#x6CD5;&#x4F20;&#x8FDB;&#x53BB;&#x7684;&#x53C2;&#x6570;&#x5C31;&#x662F;&#x2462;&#x4E2D;&#x7684; <code>BinderProxy</code><br><img src="/2020/03/26/AndroidTransactionTooLargeException/&#x4EE3;&#x7801;&#x8DDF;&#x8E2A;&#x56FE;9.jpg" alt=""></p>
+<p>&#x2464;.&#x6700;&#x7EC8;&#x8C03;&#x7528;&#x5230; <code>android_util_Binder.cpp</code><br><img src="/2020/03/26/AndroidTransactionTooLargeException/&#x4EE3;&#x7801;&#x8DDF;&#x8E2A;&#x56FE;12_2.jpg" alt=""></p>
+<p>&#x2465;.&#x6700;&#x7EC8;&#x5F02;&#x5E38;&#x5728; <code>signalExceptionForError</code> &#x4E2D;&#x629B;&#x51FA;<br><img src="/2020/03/26/AndroidTransactionTooLargeException/&#x4EE3;&#x7801;&#x8DDF;&#x8E2A;&#x56FE;13.jpg" alt=""></p>
+<p><code>parcelSize</code> &#x5927;&#x4E8E; <code>200K</code> &#x5C31;&#x4F1A;&#x62A5;&#x9519;&#xFF0C;&#x800C;&#x8FD9;&#x4E2A; <code>parcelSize</code> &#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x5BF9;&#x5E94;&#x4E00;&#x4E0B;&#xFF0C;&#x53D1;&#x73B0;&#x5C31;&#x662F; <code>BinderProxy</code> &#x7684;&#x7B2C;&#x4E8C;&#x4E2A;&#x53C2;&#x6570;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x8BF4;&#x5982;&#x679C; <code>Parcel</code> &#x5BF9;&#x8C61;&#x7684;&#x5927;&#x5C0F;&#x8D85;&#x8FC7; <code>200K</code> &#x5C31;&#x4F1A;&#x62A5;&#x51FA;&#x8FD9;&#x4E2A;&#x9519;&#x8BEF;&#x3002;</p>
+<font color="Red">&#x524D;&#x9762;&#x6587;&#x6863;&#x6307;&#x51FA;&#x6240;&#x6709; <code>transaction</code> &#x5171;&#x7528; 1Mb &#x5927;&#x5C0F;&#xFF0C;&#x6E90;&#x7801;&#x5206;&#x6790;&#x4E0B;&#x6765;&#xFF0C;<code>Android</code> &#x8FD8;&#x9650;&#x5236;&#x4E86;&#x6BCF;&#x6B21; <code>transaction</code> &#x7684;&#x6570;&#x636E;&#x4E0D;&#x8D85;&#x8FC7;200K&#x3002;</font>
+
+<h4 id="&#x95EE;&#x9898;&#x539F;&#x56E0;"><a href="#&#x95EE;&#x9898;&#x539F;&#x56E0;" class="headerlink" title="&#x95EE;&#x9898;&#x539F;&#x56E0;"></a>&#x95EE;&#x9898;&#x539F;&#x56E0;</h4><p>&#x5F88;&#x660E;&#x663E;&#xFF0C;&#x5F02;&#x5E38; <code>1105388 bytes</code> &#x8FDC;&#x5927;&#x4E8E; <code>200K</code> &#xFF0C;&#x4ECE;&#x9875;&#x9762;&#x8DF3;&#x8F6C;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x7531;&#x4E8E;&#x6570;&#x636E;&#x8FC7;&#x591A;&#xFF0C;&#x6570;&#x636E;&#x4F20;&#x9012;&#x8D85;&#x8FC7;&#x9650;&#x5236;&#xFF0C;&#x629B;&#x51FA; <code>TransactionTooLargeException</code> &#x5F02;&#x5E38;&#x3002;</p>
+<h4 id="&#x95EE;&#x9898;&#x80CC;&#x666F;"><a href="#&#x95EE;&#x9898;&#x80CC;&#x666F;" class="headerlink" title="&#x95EE;&#x9898;&#x80CC;&#x666F;"></a>&#x95EE;&#x9898;&#x80CC;&#x666F;</h4><p>1.<code>Flutter-Sku</code> &#x9875;&#x4F9D;&#x8D56;&#x5546;&#x8BE6;&#x9875;&#x4F20;&#x9012;&#x7684; <code>Sku</code> &#x6570;&#x636E;&#xFF0C;<code>Sku</code> &#x7684;&#x6570;&#x636E;&#x5927;&#x5C0F;&#x5B8C;&#x5168;&#x4F9D;&#x8D56;&#x670D;&#x52A1;&#x5668;&#x4E0B;&#x53D1;&#xFF0C;&#x5BA2;&#x6237;&#x7AEF;&#x65E0;&#x6CD5;&#x63A7;&#x5236;&#xFF1B;</p>
+<p>2.&#x82E5;&#x4E3A;&#x4E86;&#x907F;&#x514D;&#x6570;&#x636E;&#x4F20;&#x9012;&#xFF0C;<code>Flutter-Sku</code> &#x9875;&#x5355;&#x72EC;&#x8BF7;&#x6C42; <code>Sku</code> &#x6570;&#x636E;&#xFF0C;&#x4F1A;&#x5B58;&#x5728;&#x4E00;&#x5B9A;&#x5EF6;&#x8FDF;&#x5E76;&#x4E14;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x8BF7;&#x6C42;&#x5931;&#x8D25;&#x7684;&#x73B0;&#x8C61;&#xFF0C;&#x5F71;&#x54CD;&#x7528;&#x6237;&#x4F53;&#x9A8C;&#x3002;</p>
+<h4 id="&#x89E3;&#x51B3;&#x601D;&#x8DEF;"><a href="#&#x89E3;&#x51B3;&#x601D;&#x8DEF;" class="headerlink" title="&#x89E3;&#x51B3;&#x601D;&#x8DEF;"></a>&#x89E3;&#x51B3;&#x601D;&#x8DEF;</h4><h5 id="1-Native-&#x5230;-Flutter-&#x9875;&#x9762;&#x4E4B;&#x95F4;&#x7684;&#x8DF3;&#x8F6C;&#xFF1A;"><a href="#1-Native-&#x5230;-Flutter-&#x9875;&#x9762;&#x4E4B;&#x95F4;&#x7684;&#x8DF3;&#x8F6C;&#xFF1A;" class="headerlink" title="1.Native &#x5230; Flutter &#x9875;&#x9762;&#x4E4B;&#x95F4;&#x7684;&#x8DF3;&#x8F6C;&#xFF1A;"></a>1.<code>Native</code> &#x5230; <code>Flutter</code> &#x9875;&#x9762;&#x4E4B;&#x95F4;&#x7684;&#x8DF3;&#x8F6C;&#xFF1A;</h5><p>&#x56E0;&#x4E3A; <code>Native</code> &#x4E0E; <code>Flutter</code> &#x4E0D;&#x80FD;&#x5171;&#x4EAB;&#x5185;&#x5B58;&#xFF0C;&#x6240;&#x4EE5;&#x4F7F;&#x7528;&#x672C;&#x5730;&#x6301;&#x4E45;&#x5316;&#x7684;&#x65B9;&#x5F0F;&#xFF0C;<font color="Red">&#x4F46;&#x8BE5;&#x65B9;&#x5F0F;&#x9891;&#x7E41;&#x7684;&#x8BFB;&#x5199;&#x6570;&#x636E;&#x5E93;&#xFF0C;&#x5F71;&#x54CD;&#x9875;&#x9762;&#x542F;&#x52A8;&#x8017;&#x65F6;&#xFF0C;&#x7528;&#x6237;&#x4F53;&#x9A8C;&#x6709;&#x635F;&#x8017;.</font><br><img src="/2020/03/26/AndroidTransactionTooLargeException/&#x6D41;&#x7A0B;&#x793A;&#x610F;&#x56FE;.jpg" alt=""></p>
+<h5 id="2-Native-&#x5230;-Native-&#x9875;&#x9762;&#x4E4B;&#x95F4;&#x7684;&#x8DF3;&#x8F6C;&#x65B9;&#x5F0F;&#x6709;&#x4E24;&#x4E2A;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#xFF1A;"><a href="#2-Native-&#x5230;-Native-&#x9875;&#x9762;&#x4E4B;&#x95F4;&#x7684;&#x8DF3;&#x8F6C;&#x65B9;&#x5F0F;&#x6709;&#x4E24;&#x4E2A;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#xFF1A;" class="headerlink" title="2.Native &#x5230; Native &#x9875;&#x9762;&#x4E4B;&#x95F4;&#x7684;&#x8DF3;&#x8F6C;&#x65B9;&#x5F0F;&#x6709;&#x4E24;&#x4E2A;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#xFF1A;"></a>2.<code>Native</code> &#x5230; <code>Native</code> &#x9875;&#x9762;&#x4E4B;&#x95F4;&#x7684;&#x8DF3;&#x8F6C;&#x65B9;&#x5F0F;&#x6709;&#x4E24;&#x4E2A;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#xFF1A;</h5><p>&#x2460;.&#x6301;&#x4E45;&#x5316;&#x6570;&#x636E;&#x81F3;&#x672C;&#x5730;&#xFF0C;<font color="Red">&#x5F0A;&#x7AEF;&#x540C;&#x4E0A;</font><br><img src="/2020/03/26/AndroidTransactionTooLargeException/&#x6D41;&#x7A0B;&#x793A;&#x610F;&#x56FE;2.jpg" alt=""></p>
+<p>&#x2461;.&#x9759;&#x6001;&#x5185;&#x5B58;&#x53D8;&#x91CF;( <code>Native</code> &#x9875;&#x9762;&#x8DF3;&#x8F6C;&#x4E0D;&#x5B58;&#x5728;&#x65E0;&#x6CD5;&#x5171;&#x4EAB;&#x5185;&#x5B58;&#x7684;&#x60C5;&#x51B5;)&#xFF0C;&#x4F46;<font color="Red">&#x6E05;&#x7A7A;&#x9759;&#x6001;&#x5185;&#x5B58;&#x53D8;&#x91CF;&#x7684;&#x65F6;&#x673A;&#x9700;&#x8981;&#x4E1A;&#x52A1;&#x65B9;&#x81EA;&#x884C;&#x63A7;&#x5236;&#xFF0C;&#x8F83;&#x5206;&#x6563;&#x4E5F;&#x5BB9;&#x6613;&#x88AB;&#x9057;&#x6F0F;&#xFF0C;&#x4E00;&#x65E6;&#x79EF;&#x7D2F;&#x8FC7;&#x591A;&#xFF0C;&#x5BB9;&#x6613;&#x9020;&#x6210;&#x5185;&#x5B58;&#x6EA2;&#x51FA;</font></p>
+<h5 id="3-&#x5173;&#x4E8E;&#x5927;&#x6570;&#x636E;&#x4F20;&#x9012;&#xFF0C;&#x5E94;&#x8BE5;&#x5982;&#x5B98;&#x65B9;&#x6240;&#x5EFA;&#x8BAE;&#x7684;&#x90A3;&#x6837;&#xFF1A;"><a href="#3-&#x5173;&#x4E8E;&#x5927;&#x6570;&#x636E;&#x4F20;&#x9012;&#xFF0C;&#x5E94;&#x8BE5;&#x5982;&#x5B98;&#x65B9;&#x6240;&#x5EFA;&#x8BAE;&#x7684;&#x90A3;&#x6837;&#xFF1A;" class="headerlink" title="3.&#x5173;&#x4E8E;&#x5927;&#x6570;&#x636E;&#x4F20;&#x9012;&#xFF0C;&#x5E94;&#x8BE5;&#x5982;&#x5B98;&#x65B9;&#x6240;&#x5EFA;&#x8BAE;&#x7684;&#x90A3;&#x6837;&#xFF1A;"></a>3.&#x5173;&#x4E8E;&#x5927;&#x6570;&#x636E;&#x4F20;&#x9012;&#xFF0C;&#x5E94;&#x8BE5;&#x5982;&#x5B98;&#x65B9;&#x6240;&#x5EFA;&#x8BAE;&#x7684;&#x90A3;&#x6837;&#xFF1A;</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Avoid transferring huge arrays of strings or large bitmaps. If possible, try to break up big requests into smaller pieces.</div></pre></td></tr></table></figure>
+<p>&#x8BD1;&#xFF1A;&#x907F;&#x514D;&#x4F20;&#x9012;&#x5927;&#x6570;&#x636E;&#x5982; strings &#x6216;&#x8005; bitmaps &#xFF0C;&#x5C3D;&#x53EF;&#x80FD;&#x7684;&#x5C06;&#x5927;&#x6570;&#x636E;&#x5206;&#x89E3;&#x6210;&#x5C0F;&#x5757;&#x3002;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">If you are implementing a service, it may help to impose size or complexity contraints on the queries that clients can perform. For example, if the result set could become large, then don&apos;t allow the client to request more than a few records at a time. Alternately, instead of returning all of the available data all at once, return the essential information first and make the client ask for additional information later as needed.</div></pre></td></tr></table></figure>
+<p>&#x8BD1;&#xFF1A;&#x5982;&#x679C;&#x5B9E;&#x73B0;&#x4E00;&#x4E2A; Service &#x670D;&#x52A1;&#x8005;&#xFF0C;&#x5F3A;&#x5236;&#x6027;&#x7684;&#x89C4;&#x5B9A; Binder Client &#x7684;&#x8FDC;&#x7A0B;&#x8C03;&#x7528;&#x7684;&#x5927;&#x5C0F;&#x548C;&#x5236;&#x5B9A;&#x4E00;&#x4E9B;&#x590D;&#x6742;&#x7684;&#x7EA6;&#x675F;&#x3002;&#x6BD4;&#x5982;&#xFF0C;&#x5982;&#x679C;&#x7ED3;&#x679C;&#x96C6;&#x5408;&#x53EF;&#x80FD;&#x4F1A;&#x53D8;&#x7684;&#x5F88;&#x5927;&#xFF0C;&#x90A3;&#x4E48;&#x5C31;&#x4E0D;&#x5141;&#x8BB8; Binder Client &#x5728;&#x4E00;&#x4E2A;&#x65F6;&#x95F4;&#x70B9;&#x5185;&#x8BF7;&#x6C42;&#x8D85;&#x8FC7;&#x4E00;&#x5B9A;&#x6570;&#x91CF;&#xFF1B;&#x53C8;&#x6216;&#x8005;&#x53EF;&#x4EE5;&#x9009;&#x62E9;&#x6027;&#x5730;&#x5F53;&#x8FD4;&#x56DE;&#x503C;&#x5F88;&#x5927;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4E0D;&#x9700;&#x8981;&#x4E00;&#x6B21;&#x6027;&#x8FD4;&#x56DE;&#x6240;&#x6709;&#x6570;&#x636E;&#xFF0C;&#x53EF;&#x4EE5;&#x7B2C;&#x4E00;&#x6B21;&#x5148;&#x8FD4;&#x56DE;&#x5173;&#x952E;&#x7684;&#x6570;&#x636E;&#x540E;&#x7EED;&#x5982;&#x679C;&#x9700;&#x8981;&#x7684;&#x8BDD;&#x8BA9; Binder Client &#x518D;&#x6B21;&#x53BB;&#x8BF7;&#x6C42;&#x989D;&#x5916;&#x7684;&#x4FE1;&#x606F;&#x3002;</p>
+<h4 id="&#x95EE;&#x9898;&#x6269;&#x5C55;"><a href="#&#x95EE;&#x9898;&#x6269;&#x5C55;" class="headerlink" title="&#x95EE;&#x9898;&#x6269;&#x5C55;"></a>&#x95EE;&#x9898;&#x6269;&#x5C55;</h4><p>&#x5F88;&#x591A;&#x65B9;&#x5F0F;&#x53EF;&#x80FD;&#x5BFC;&#x81F4;&#x629B;&#x51FA;&#x8BE5;&#x5F02;&#x5E38;&#xFF0C;&#x53EF;&#x53C2;&#x89C1;<a href="https://stackoverflow.com/questions/11451393/what-to-do-on-transactiontoolargeexception/12809171#12809171" target="_blank" rel="external">l<br>What to do on TransactionTooLargeException</a>&#xFF0C;&#x5927;&#x5230;&#x4F20;&#x8F93;&#x56FE;&#x7247;&#xFF0C;&#x5C0F;&#x5230;&#x8C03;&#x7528;&#x4E00;&#x6B21;Dialog&#x5F39;&#x51FA;&#x3002;</p>
+<h4 id="&#x590D;&#x76D8;"><a href="#&#x590D;&#x76D8;" class="headerlink" title="&#x590D;&#x76D8;"></a>&#x590D;&#x76D8;</h4><p>&#x5728;&#x95EE;&#x9898;&#x6269;&#x5C55;&#x4E2D;&#x63D0;&#x5230;&#x7684;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#xFF0C;&#x5176;&#x5B9E;&#x90FD;&#x6709;&#x5404;&#x81EA;&#x7684;&#x5F0A;&#x7AEF;&#x3002;&#x66F4;&#x63A8;&#x8350;&#x7684;&#x65B9;&#x5F0F;&#x662F;&#xFF0C;&#x5728;&#x9875;&#x9762;&#x8DF3;&#x8F6C;&#x95F4;&#x4E0D;&#x5F97;&#x4E0D;&#x4F20;&#x9012;&#x5927;&#x6570;&#x636E;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#x4F7F;&#x7528;&#x63D0;&#x4F9B;&#x4E0A;&#x9762;&#x7684;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#xFF0C;&#x5176;&#x4ED6;&#x60C5;&#x51B5;&#x8FD8;&#x662F;&#x7CFB;&#x7EDF;&#x65B9;&#x5F0F;&#x3002;</p>
+<p>&#x7531;&#x4E8E;&#x662F;&#x518D;&#x6B63;&#x5E38;&#x4E0D;&#x8FC7;&#x7684;&#x4EA4;&#x4E92;&#x884C;&#x4E3A;&#xFF0C;&#x53EF;&#x80FD;&#x6211;&#x4EEC;&#x6CA1;&#x7528;&#x529E;&#x6CD5;&#x505A;&#x5230;&#x964D;&#x7EA7;&#x548C;&#x56DE;&#x6EDA;&#xFF0C;&#x9664;&#x4E86;&#x5728;&#x4E00;&#x4E9B;&#x6211;&#x4EEC;&#x6709;&#x610F;&#x8BC6;&#x5230;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x5927;&#x6570;&#x636E;&#x4F20;&#x9012;&#x7684;&#x573A;&#x666F;&#x4E0B;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x4E3B;&#x52A8;&#x907F;&#x514D;&#x8BE5;&#x5F02;&#x5E38;&#x3002; &#x5728;&#x5176;&#x4ED6;&#x6211;&#x4EEC;&#x65E0;&#x6CD5;&#x610F;&#x8BC6;&#x5230;&#x7684;&#x6B63;&#x5E38;&#x8C03;&#x7528;&#x4E0B;&#xFF0C;&#x6211;&#x4EEC;&#x8981;&#x505A;&#x5230;&#x53EF;&#x4EE5;&#x53EF;&#x76D1;&#x63A7;&#x3002;</p>
+<p>&#x76EE;&#x524D; <code>Android</code> &#x8DEF;&#x7531;&#x8DF3;&#x8F6C;&#x4E0A;&#x5BF9;&#x53C2;&#x6570;&#x505A;&#x4E86;&#x6539;&#x9020;&#x548C;&#x5C01;&#x88C5;&#xFF0C;&#x4F7F;&#x7528;&#x52A8;&#x6001;&#x4EE3;&#x7406;&#x7684;&#x65B9;&#x5F0F;&#x76D1;&#x63A7;&#x9700;&#x8981;&#x5BF9;&#x8DEF;&#x7531;&#x89C4;&#x5219;&#x505A;&#x4E00;&#x5C42;&#x8F6C;&#x6362;&#xFF0C;&#x533A;&#x522B;&#x4E8E;&#x7CFB;&#x7EDF;&#x8C03;&#x7528;&#x4E0A;&#x7684;&#x5224;&#x65AD;&#x3002;</p>
+<p>(&#x672A;&#x5B8C;&#x5F85;&#x7EED;)</p>
+<h3 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h3><ol>
+<li><a href="https://blog.csdn.net/self_study/article/details/60136277" target="_blank" rel="external">Android TransactionTooLargeException &#x89E3;&#x6790;&#xFF0C;&#x601D;&#x8003;&#x4E0E;&#x76D1;&#x63A7;&#x65B9;&#x6848;</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/03/26/AndroidTransactionTooLargeException/" data-id="ck99nnxzu002numqy10b1jbv5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/10/22/AndroidPopupWindowCrash/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">常见的PopupWindow Crash：xxx not attached to window manager 问题分析到修复之路</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AIDL/">AIDL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Canvas/">Canvas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ClassLoader/">ClassLoader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HttpClient/">HttpClient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HttpResponseCache/">HttpResponseCache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HttpURLConnection/">HttpURLConnection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPC/">IPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IntentFlag/">IntentFlag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java基础/">Java基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java并发/">Java并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View/">View</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebView/">WebView</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android-sharedUserId/">android:sharedUserId</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cache/">cache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/launchmode/">launchmode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/okhttp/">okhttp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/push/">push</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事件分发/">事件分发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存泄露/">内存泄露</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/图片加载/">图片加载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/基本数据类型/">基本数据类型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/开源库/">开源库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/消息机制/">消息机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/移位操作符/">移位操作符</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络/">网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络加载/">网络加载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/网络库/">网络库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/自定义View/">自定义View</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/阻塞队列/">阻塞队列</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AIDL/" style="font-size: 10px;">AIDL</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Bitmap/" style="font-size: 10px;">Bitmap</a> <a href="/tags/Canvas/" style="font-size: 10px;">Canvas</a> <a href="/tags/ClassLoader/" style="font-size: 10px;">ClassLoader</a> <a href="/tags/HTTP/" style="font-size: 12.5px;">HTTP</a> <a href="/tags/HttpClient/" style="font-size: 10px;">HttpClient</a> <a href="/tags/HttpResponseCache/" style="font-size: 10px;">HttpResponseCache</a> <a href="/tags/HttpURLConnection/" style="font-size: 10px;">HttpURLConnection</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/IntentFlag/" style="font-size: 10px;">IntentFlag</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Java基础/" style="font-size: 10px;">Java基础</a> <a href="/tags/Java并发/" style="font-size: 12.5px;">Java并发</a> <a href="/tags/Network/" style="font-size: 10px;">Network</a> <a href="/tags/View/" style="font-size: 12.5px;">View</a> <a href="/tags/WebView/" style="font-size: 10px;">WebView</a> <a href="/tags/android-sharedUserId/" style="font-size: 10px;">android:sharedUserId</a> <a href="/tags/cache/" style="font-size: 10px;">cache</a> <a href="/tags/launchmode/" style="font-size: 10px;">launchmode</a> <a href="/tags/okhttp/" style="font-size: 10px;">okhttp</a> <a href="/tags/push/" style="font-size: 10px;">push</a> <a href="/tags/事件分发/" style="font-size: 10px;">事件分发</a> <a href="/tags/内存泄露/" style="font-size: 10px;">内存泄露</a> <a href="/tags/图片加载/" style="font-size: 12.5px;">图片加载</a> <a href="/tags/基本数据类型/" style="font-size: 10px;">基本数据类型</a> <a href="/tags/开源库/" style="font-size: 17.5px;">开源库</a> <a href="/tags/消息机制/" style="font-size: 10px;">消息机制</a> <a href="/tags/移位操作符/" style="font-size: 10px;">移位操作符</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a> <a href="/tags/网络加载/" style="font-size: 10px;">网络加载</a> <a href="/tags/网络库/" style="font-size: 10px;">网络库</a> <a href="/tags/自定义View/" style="font-size: 10px;">自定义View</a> <a href="/tags/阻塞队列/" style="font-size: 10px;">阻塞队列</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/03/26/AndroidTransactionTooLargeException/">TransactionTooLargeException问题分析</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/22/AndroidPopupWindowCrash/">常见的PopupWindow Crash：xxx not attached to window manager 问题分析到修复之路</a>
+          </li>
+        
+          <li>
+            <a href="/2019/06/12/Android网络踩坑小记/">网络踩坑小记</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/03/onSaveInstanceState/">记一次踩坑：onSaveInstanceState &amp; onRestoreInstanceState过程分析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/12/18/AndroidMemoryLeak/">考拉app内存泄露实践&amp;总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 xiongcen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
