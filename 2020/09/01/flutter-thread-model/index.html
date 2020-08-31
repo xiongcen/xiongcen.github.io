@@ -3,14 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: HTTP | Hexo</title>
+  <title>Flutter线程模型 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/tags/HTTP/index.html">
+  <meta name="description" content="&amp;#x6458;&amp;#x8981;Flutter Engine&amp;#x5C42;&amp;#x9762;&amp;#xFF0C;&amp;#x6709;&amp;#x56DB;&amp;#x4E2A;Runner&amp;#x5404;&amp;#x53F8;&amp;#x5176;&amp;#x804C;&amp;#xFF0C;&amp;#x8FD9;&amp;#x91CC;&amp;#x7684;Runner&amp;#x5176;&amp;#x5B9E;&amp;#x5C31;&amp;#x662F;&amp;#x7EBF;&amp;#x7A0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter线程模型">
+<meta property="og:url" content="http://yoursite.com/2020/09/01/flutter-thread-model/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="&amp;#x6458;&amp;#x8981;Flutter Engine&amp;#x5C42;&amp;#x9762;&amp;#xFF0C;&amp;#x6709;&amp;#x56DB;&amp;#x4E2A;Runner&amp;#x5404;&amp;#x53F8;&amp;#x5176;&amp;#x804C;&amp;#xFF0C;&amp;#x8FD9;&amp;#x91CC;&amp;#x7684;Runner&amp;#x5176;&amp;#x5B9E;&amp;#x5C31;&amp;#x662F;&amp;#x7EBF;&amp;#x7A0">
+<meta property="og:updated_time" content="2020-08-31T16:45:41.864Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="Flutter线程模型">
+<meta name="twitter:description" content="&amp;#x6458;&amp;#x8981;Flutter Engine&amp;#x5C42;&amp;#x9762;&amp;#xFF0C;&amp;#x6709;&amp;#x56DB;&amp;#x4E2A;Runner&amp;#x5404;&amp;#x53F8;&amp;#x5176;&amp;#x804C;&amp;#xFF0C;&amp;#x8FD9;&amp;#x91CC;&amp;#x7684;Runner&amp;#x5176;&amp;#x5B9E;&amp;#x5C31;&amp;#x662F;&amp;#x7EBF;&amp;#x7A0">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -59,58 +63,128 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/04/13/HTTP5-6/" class="archive-article-date">
-  <time datetime="2017-04-13T03:26:55.000Z" itemprop="datePublished">Apr 13</time>
+        <section id="main"><article id="post-flutter-thread-model" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/09/01/flutter-thread-model/" class="article-date">
+  <time datetime="2020-08-31T16:39:17.000Z" itemprop="datePublished">2020-09-01</time>
 </a>
-      
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Flutter/">Flutter</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/13/HTTP5-6/">(转)《图解HTTP》第5-6章笔记</a>
+    <h1 class="article-title" itemprop="name">
+      Flutter线程模型
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2017/04/13/HTTP2-4/" class="archive-article-date">
-  <time datetime="2017-04-13T03:22:43.000Z" itemprop="datePublished">Apr 13</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/13/HTTP2-4/">(转)《图解HTTP》第2-4章笔记</a>
-    </h1>
-  
+        <h5 id="&#x6458;&#x8981;"><a href="#&#x6458;&#x8981;" class="headerlink" title="&#x6458;&#x8981;"></a>&#x6458;&#x8981;</h5><p>Flutter Engine&#x5C42;&#x9762;&#xFF0C;&#x6709;&#x56DB;&#x4E2A;Runner&#x5404;&#x53F8;&#x5176;&#x804C;&#xFF0C;&#x8FD9;&#x91CC;&#x7684;Runner&#x5176;&#x5B9E;&#x5C31;&#x662F;&#x7EBF;&#x7A0B;&#xFF0C;&#x4E0D;&#x8FC7;&#x8FD9;&#x56DB;&#x4E2A;Runner&#x662F;&#x7531;Engine&#x548C;Native&#x4E4B;&#x95F4;&#x7684;&#x90A3;&#x4E2A;&#x5D4C;&#x5165;&#x5C42;(Embedder)&#x53BB;&#x8D4B;&#x503C;&#x7684;&#xFF0C;Engine&#x5C42;&#x53EA;&#x4F1A;&#x4F7F;&#x7528;&#x8FD9;&#x56DB;&#x4E2A;Runner&#xFF0C;&#x4E0D;&#x4F1A;&#x521B;&#x5EFA;&#x65B0;&#x7684;&#x7EBF;&#x7A0B;&#x3002;</p>
+<a id="more"></a>
+<h4 id="Platform-Task-Runner"><a href="#Platform-Task-Runner" class="headerlink" title="Platform Task Runner"></a>Platform Task Runner</h4><ul>
+<li>&#x5BF9;&#x5E94;&#x5E73;&#x53F0;&#x7684;&#x7EBF;&#x7A0B;&#x7684;<font color="red">&#x4E3B;&#x7EBF;&#x7A0B;</font>&#xFF1B;</li>
+<li><p>Mobile&#x5E73;&#x53F0;&#x6240;&#x6709;Engine&#x5B9E;&#x4F8B;&#x5171;&#x4EAB;&#x540C;&#x4E00;&#x4E2A;Platform Task Runner&#x548C;&#x7EBF;&#x7A0B;&#xFF1B;</p>
+</li>
+<li><p>&#x529F;&#x80FD;&#xFF1A;</p>
+<ol>
+<li>&#x5904;&#x7406;&#x4E0E;Engine&#x5C42;&#x7684;&#x4EA4;&#x4E92;</li>
+<li>&#x5904;&#x7406;&#x5E73;&#x53F0;&#xFF08;Android/iOS&#xFF09;&#x7684;&#x6D88;&#x606F;</li>
+</ol>
+</li>
+<li><p>&#x4E3A;&#x4EC0;&#x4E48;&#x4E00;&#x5B9A;&#x8981;&#x662F;&#x5E73;&#x53F0;&#x7684;&#x4E3B;&#x7EBF;&#x7A0B;&#xFF1F; &#x56E0;&#x4E3A;Platform Task Runner&#x4F7F;&#x7528;Platform Channel&#x5904;&#x7406;&#x5E73;&#x53F0;&#x7684;&#x6D88;&#x606F;&#xFF0C;&#x4F46;<font color="red">Platform Channel&#x5E76;&#x975E;&#x662F;&#x7EBF;&#x7A0B;&#x5B89;&#x5168;</font>&#xFF0C;&#x6545;&#x5E73;&#x53F0;&#x8DDF;Flutter Engine&#x7684;&#x6240;&#x6709;&#x4EA4;&#x4E92;&#x5FC5;&#x987B;&#x5728;&#x5E73;&#x53F0;&#x7684;&#x4E3B;&#x7EBF;&#x7A0B;&#x4E2D;&#x6267;&#x884C;&#x7684;&#xFF0C;&#x6240;&#x4EE5;Platform Task Runner&#x8FD0;&#x884C;&#x6240;&#x5728;&#x7684;&#x5E73;&#x53F0;&#x7684;&#x7EBF;&#x7A0B;&#x5FC5;&#x987B;&#x662F;&#x4E3B;&#x7EBF;&#x7A0B;&#xFF1B;</p>
+</li>
+<li><p>&#x5C3D;&#x7BA1;&#x963B;&#x585E;&#x8BE5;&#x7EBF;&#x7A0B;&#x5E76;&#x4E0D;&#x4F1A;&#x5F71;&#x54CD;Flutter&#x6E32;&#x67D3;&#x7BA1;&#x9053;&#x5BFC;&#x81F4;&#x9875;&#x9762;&#x5361;&#x987F;&#xFF0C;&#x4F46;&#x4E3B;&#x7EBF;&#x7A0B;&#x5EFA;&#x8BAE;&#x4E0D;&#x8981;&#x6267;&#x884C;&#x8017;&#x65F6;&#x64CD;&#x4F5C;&#xFF0C;&#x5426;&#x5219;&#x53EF;&#x80FD;&#x89E6;&#x53D1;Watchdog&#x6765;&#x7ED3;&#x675F;&#x8BE5;&#x5E94;&#x7528;&#x3002;&#x6BD4;&#x5982;Android&#x3001;iOS&#x90FD;&#x662F;&#x4F7F;&#x7528;&#x5E73;&#x53F0;&#x7EBF;&#x7A0B;&#x6765;&#x4F20;&#x9012;&#x7528;&#x6237;&#x8F93;&#x5165;&#x4E8B;&#x4EF6;&#xFF0C;&#x4E00;&#x65E6;&#x5E73;&#x53F0;&#x7EBF;&#x7A0B;&#x88AB;&#x963B;&#x585E;&#x5219;&#x4F1A;&#x5F15;&#x8D77;&#x624B;&#x52BF;&#x4E8B;&#x4EF6;&#x4E22;&#x5931;&#x3002;</p>
+</li>
+</ul>
+<h4 id="UI-Task-Runner"><a href="#UI-Task-Runner" class="headerlink" title="UI Task Runner"></a>UI Task Runner</h4><ul>
+<li><p>&#x5BF9;&#x5E94;&#x5E73;&#x53F0;&#x7684;&#x7EBF;&#x7A0B;&#x7684;<font color="red">&#x5B50;&#x7EBF;&#x7A0B;</font>&#xFF1B;</p>
+</li>
+<li><p>&#x529F;&#x80FD;&#xFF1A;</p>
+<ol>
+<li>&#x7528;&#x4E8E; Flutter Engine &#x6267;&#x884C; Root Isolate &#x4E2D;&#x7684;&#x6240;&#x6709;Dart&#x4EE3;&#x7801;</li>
+<li>&#x6267;&#x884C;&#x6E32;&#x67D3;&#x4E0E;&#x5904;&#x7406;Vsync&#x4FE1;&#x53F7;&#xFF0C;&#x5C06;Widget&#x8F6C;&#x6362;&#x751F;&#x6210;Layer Tree</li>
+<li>&#x5904;&#x7406;&#x6765;&#x81EA;Native Plugins&#x7684;&#x6D88;&#x606F;</li>
+<li>Timers</li>
+<li>Microtasks</li>
+<li>&#x5F02;&#x6B65; I/O &#x64CD;&#x4F5C;(sockets, file handles, &#x7B49;)</li>
+</ol>
+</li>
+<li><p>&#x963B;&#x585E;&#x8FD9;&#x4E2A;&#x7EBF;&#x7A0B;&#x4F1A;&#x76F4;&#x63A5;&#x5BFC;&#x81F4;Flutter&#x5E94;&#x7528;&#x5361;&#x987F;&#x6389;&#x5E27;&#x3002;&#x4E3A;&#x4E86;&#x9632;&#x6B62;&#x963B;&#x585E;&#x8FD9;&#x4E2A;&#x7EBF;&#x7A0B;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x521B;&#x5EFA;&#x5176;&#x4ED6;&#x7684;Isolate&#xFF0C;&#x521B;&#x5EFA;&#x7684;Isolate&#x6CA1;&#x6709;&#x7ED1;&#x5B9A;Flutter&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x53EA;&#x80FD;&#x505A;&#x6570;&#x636E;&#x8FD0;&#x7B97;&#xFF0C;&#x4E0D;&#x80FD;&#x8C03;&#x7528;Flutter&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x800C;&#x4E14;&#x521B;&#x5EFA;&#x7684;Isolate&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x53D7;Root Isolate&#x63A7;&#x5236;&#xFF0C;Root Isolate&#x505C;&#x6B62;&#xFF0C;&#x5176;&#x4ED6;&#x7684;Isolate&#x4E5F;&#x4F1A;&#x505C;&#x6B62;&#xFF0C;&#x800C;&#x4E14;&#x521B;&#x5EFA;&#x7684;Isolate&#x8FD0;&#x884C;&#x7684;&#x7EBF;&#x7A0B;&#xFF0C;&#x662F;DartVM&#x91CC;&#x7684;&#x7EBF;&#x7A0B;&#x6C60;&#x63D0;&#x4F9B;&#x7684;&#xFF1B;</p>
+</li>
+</ul>
+<h4 id="GPU-Task-Runner"><a href="#GPU-Task-Runner" class="headerlink" title="GPU Task Runner"></a>GPU Task Runner</h4><ul>
+<li><p>&#x5BF9;&#x5E94;&#x5E73;&#x53F0;&#x7684;&#x7EBF;&#x7A0B;&#x7684;<font color="red">&#x5B50;&#x7EBF;&#x7A0B;</font>&#xFF1B;</p>
+</li>
+<li><p>&#x529F;&#x80FD;&#xFF1A;</p>
+<ol>
+<li>&#x4E3B;&#x8981;&#x7528;&#x4E8E;&#x6267;&#x884C;&#x8BBE;&#x5907;GPU&#x7684;&#x6307;&#x4EE4;&#xFF1A;&#x5728;UI Task Runner &#x521B;&#x5EFA;Layer Tree&#xFF0C;&#x5728;GPU Task Runner&#x5C06;Layer Tree&#x63D0;&#x4F9B;&#x7684;&#x4FE1;&#x606F;&#x8F6C;&#x5316;&#x4E3A;&#x5E73;&#x53F0;&#x53EF;&#x6267;&#x884C;&#x7684;GPU&#x6307;&#x4EE4;&#xFF1B;</li>
+</ol>
+</li>
+<li><p>UI Task Runner&#x548C;GPU Task Runner&#x8DD1;&#x5728;&#x4E0D;&#x540C;&#x7684;&#x7EBF;&#x7A0B;&#x3002;GPU Task Runner&#x4F1A;&#x6839;&#x636E;&#x76EE;&#x524D;&#x5E27;&#x6267;&#x884C;&#x7684;&#x8FDB;&#x5EA6;&#x53BB;&#x5411;UI Task Runner&#x8981;&#x6C42;&#x4E0B;&#x4E00;&#x5E27;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x5728;&#x4EFB;&#x52A1;&#x7E41;&#x91CD;&#x7684;&#x65F6;&#x5019;&#x53EF;&#x80FD;&#x4F1A;&#x544A;&#x8BC9;UI Task Runner&#x5EF6;&#x8FDF;&#x4EFB;&#x52A1;&#xFF0C;&#x4F8B;&#x5982;&#x57FA;&#x4E8E;Layer Tree&#x7684;&#x5904;&#x7406;&#x65F6;&#x957F;&#x548C;GPU&#x5E27;&#x663E;&#x793A;&#x5230;&#x5C4F;&#x5E55;&#x7684;&#x8017;&#x65F6;&#xFF0C;GPU Task Runner&#x53EF;&#x80FD;&#x4F1A;&#x5EF6;&#x8FDF;&#x4E0B;&#x4E00;&#x5E27;&#x5728;UI Task Runner&#x7684;&#x8C03;&#x5EA6;&#x3002;&#x8FD9;&#x79CD;&#x8C03;&#x5EA6;&#x673A;&#x5236;&#x786E;&#x4FDD;GPU Task Runner&#x4E0D;&#x81F3;&#x4E8E;&#x8FC7;&#x8F7D;&#xFF0C;&#x540C;&#x65F6;&#x4E5F;&#x907F;&#x514D;&#x4E86;UI Task Runner&#x4E0D;&#x5FC5;&#x8981;&#x7684;&#x6D88;&#x8017;&#xFF1B;</p>
+</li>
+<li><p>&#x5728;&#x6B64;&#x7EBF;&#x7A0B;&#x8017;&#x65F6;&#x592A;&#x4E45;&#x7684;&#x8BDD;&#xFF0C;&#x4F1A;&#x9020;&#x6210;Flutter&#x5E94;&#x7528;&#x5361;&#x987F;&#xFF0C;&#x6240;&#x4EE5;&#x5728;GPU Task Runner&#x5C3D;&#x91CF;&#x4E0D;&#x8981;&#x505A;&#x8017;&#x65F6;&#x7684;&#x4EFB;&#x52A1;&#xFF0C;&#x4F8B;&#x5982;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x53BB;&#x8BFB;&#x53D6;&#x56FE;&#x7247;&#x6570;&#x636E;&#xFF0C;&#x5C31;&#x4E0D;&#x5E94;&#x8BE5;&#x653E;&#x5728;GPU Task Runner&#xFF0C;&#x800C;&#x662F;&#x653E;&#x5728;&#x63A5;&#x4E0B;&#x6765;&#x8981;&#x8BB2;&#x7684;IO Task Runner&#xFF1B;</p>
+</li>
+<li><p>&#x5EFA;&#x8BAE;&#x4E3A;&#x6BCF;&#x4E00;&#x4E2A;Engine&#x5B9E;&#x4F8B;&#x90FD;&#x65B0;&#x5EFA;&#x4E00;&#x4E2A;&#x4E13;&#x7528;&#x7684;GPU Task Runner&#x7EBF;&#x7A0B;&#x3002;</p>
+</li>
+</ul>
+<h4 id="IO-Task-Runner"><a href="#IO-Task-Runner" class="headerlink" title="IO Task Runner"></a>IO Task Runner</h4><ul>
+<li><p>&#x5BF9;&#x5E94;&#x5E73;&#x53F0;&#x7684;&#x7EBF;&#x7A0B;&#x7684;<font color="red">&#x5B50;&#x7EBF;&#x7A0B;</font>&#xFF1B;</p>
+</li>
+<li><p>&#x529F;&#x80FD;&#xFF1A;</p>
+<ol>
+<li>&#x4E3B;&#x8981;&#x529F;&#x80FD;&#x662F;&#x4ECE;&#x56FE;&#x7247;&#x5B58;&#x50A8;&#xFF08;&#x6BD4;&#x5982;&#x78C1;&#x76D8;&#xFF09;&#x4E2D;&#x8BFB;&#x53D6;&#x538B;&#x7F29;&#x7684;&#x56FE;&#x7247;&#x683C;&#x5F0F;&#xFF0C;&#x5C06;&#x56FE;&#x7247;&#x6570;&#x636E;&#x8FDB;&#x884C;&#x5904;&#x7406;&#x4E3A;GPU Task Runner&#x7684;&#x6E32;&#x67D3;&#x505A;&#x597D;&#x51C6;&#x5907;&#x3002;IO Task Runner&#x9996;&#x5148;&#x8981;&#x8BFB;&#x53D6;&#x538B;&#x7F29;&#x7684;&#x56FE;&#x7247;&#x4E8C;&#x8FDB;&#x5236;&#x6570;&#x636E;&#xFF08;&#x6BD4;&#x5982;PNG&#xFF0C;JPEG&#xFF09;&#xFF0C;&#x5C06;&#x5176;&#x89E3;&#x538B;&#x8F6C;&#x6362;&#x6210;GPU&#x80FD;&#x591F;&#x5904;&#x7406;&#x7684;&#x683C;&#x5F0F;&#x7136;&#x540E;&#x5C06;&#x6570;&#x636E;&#x4E0A;&#x4F20;&#x5230;GPU&#x3002; </li>
+<li>&#x52A0;&#x8F7D;&#x5176;&#x4ED6;&#x8D44;&#x6E90;&#x6587;&#x4EF6;</li>
+</ol>
+</li>
+<li><p>&#x5728;IO Task Runner&#x4E0D;&#x4F1A;&#x963B;&#x585E;Flutter&#xFF0C;&#x867D;&#x7136;&#x5728;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x548C;&#x8D44;&#x6E90;&#x7684;&#x65F6;&#x5019;&#x53EF;&#x80FD;&#x4F1A;&#x5EF6;&#x8FDF;&#xFF0C;&#x4F46;&#x662F;&#x8FD8;&#x662F;&#x5EFA;&#x8BAE;&#x4E3A;IO Task Runner&#x5355;&#x72EC;&#x5F00;&#x4E00;&#x4E2A;&#x7EBF;&#x7A0B;&#x3002;</p>
+</li>
+</ul>
+<h3 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h3><ol>
+<li><a href="https://juejin.im/entry/6844903620064837645" target="_blank" rel="external">&#x6DF1;&#x5165;&#x7406;&#x89E3;Flutter&#x5F15;&#x64CE;&#x7EBF;&#x7A0B;&#x6A21;&#x5F0F;</a></li>
+<li><a href="https://juejin.im/post/6844903759735160840" target="_blank" rel="external">Flutter&#x7684;thread model</a></li>
+</ol>
 
-    </header>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/09/01/flutter-thread-model/" data-id="ckeir808p001556qyo9225xf5" class="article-share-link">Share</a>
+      
+      
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/09/01/dart-async/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Dart的单线程模型&amp;异步操作
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/09/01/flutter-booting/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深入理解Flutter引擎启动</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
-  
 
 </section>
         
