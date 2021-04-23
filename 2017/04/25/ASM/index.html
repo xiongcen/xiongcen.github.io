@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>学习ASM的基础用法 | xiongcen的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;#x6458;&amp;#x8981;&amp;#x65B0;&amp;#x95FB;&amp;#x91CC;&amp;#x4F7F;&amp;#x7528;&amp;#x7684;&amp;#x70ED;&amp;#x8865;&amp;#x4E01;&amp;#x4FEE;&amp;#x590D;&amp;#x65B9;&amp;#x6848;&amp;#x662F;&amp;#x57FA;&amp;#x4E8E;AspectJ&amp;#xFF0C;AspectJ&amp;#x662F;AOP&amp;#x7684;&amp;#x4E00;&amp;#x79CD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习ASM的基础用法">
+<meta property="og:url" content="http://yoursite.com/2017/04/25/ASM/index.html">
+<meta property="og:site_name" content="xiongcen的博客">
+<meta property="og:description" content="&amp;#x6458;&amp;#x8981;&amp;#x65B0;&amp;#x95FB;&amp;#x91CC;&amp;#x4F7F;&amp;#x7528;&amp;#x7684;&amp;#x70ED;&amp;#x8865;&amp;#x4E01;&amp;#x4FEE;&amp;#x590D;&amp;#x65B9;&amp;#x6848;&amp;#x662F;&amp;#x57FA;&amp;#x4E8E;AspectJ&amp;#xFF0C;AspectJ&amp;#x662F;AOP&amp;#x7684;&amp;#x4E00;&amp;#x79CD">
+<meta property="og:image" content="http://yoursite.com/2017/04/25/ASM/01.jpg">
+<meta property="og:image" content="http://yoursite.com/2017/04/25/ASM/02.png">
+<meta property="og:image" content="http://yoursite.com/2017/04/25/ASM/03.png">
+<meta property="og:image" content="http://yoursite.com/2017/04/25/ASM/04.png">
+<meta property="og:updated_time" content="2021-04-23T15:07:10.856Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习ASM的基础用法">
+<meta name="twitter:description" content="&amp;#x6458;&amp;#x8981;&amp;#x65B0;&amp;#x95FB;&amp;#x91CC;&amp;#x4F7F;&amp;#x7528;&amp;#x7684;&amp;#x70ED;&amp;#x8865;&amp;#x4E01;&amp;#x4FEE;&amp;#x590D;&amp;#x65B9;&amp;#x6848;&amp;#x662F;&amp;#x57FA;&amp;#x4E8E;AspectJ&amp;#xFF0C;AspectJ&amp;#x662F;AOP&amp;#x7684;&amp;#x4E00;&amp;#x79CD">
+<meta name="twitter:image" content="http://yoursite.com/2017/04/25/ASM/01.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="xiongcen的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xiongcen的博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ASM" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/25/ASM/" class="article-date">
+  <time datetime="2017-04-25T10:13:56.000Z" itemprop="datePublished">2017-04-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ASM/">ASM</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      学习ASM的基础用法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h5 id="&#x6458;&#x8981;"><a href="#&#x6458;&#x8981;" class="headerlink" title="&#x6458;&#x8981;"></a>&#x6458;&#x8981;</h5><p>&#x65B0;&#x95FB;&#x91CC;&#x4F7F;&#x7528;&#x7684;&#x70ED;&#x8865;&#x4E01;&#x4FEE;&#x590D;&#x65B9;&#x6848;&#x662F;&#x57FA;&#x4E8E;AspectJ&#xFF0C;AspectJ&#x662F;AOP&#x7684;&#x4E00;&#x79CD;&#x5B9E;&#x73B0;&#x3002;</p>
+<p>&#x65E0;&#x610F;&#x63A5;&#x89E6;&#x5230;&#x4E00;&#x79CD;&#x5C0F;&#x5DE7;&#x8F7B;&#x4FBF;&#x7684;Java&#x5B57;&#x8282;&#x7801;&#x64CD;&#x63A7;&#x6846;&#x67B6;ASM&#xFF0C;&#x5B83;&#x4E5F;&#x80FD;&#x65B9;&#x4FBF;&#x5730;&#x751F;&#x6210;&#x548C;&#x6539;&#x9020;Java&#x4EE3;&#x7801;&#x3002;</p>
+<p>&#x672C;&#x6587;&#x4E3B;&#x8981;&#x5206;&#x4E3A;&#x51E0;&#x4E2A;&#x90E8;&#x5206;&#xFF1A;</p>
+<ol>
+<li>&#x4EC0;&#x4E48;&#x662F;ASM&#xFF1B;</li>
+<li>&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x52A8;&#x6001;&#x751F;&#x6210;Java&#x7C7B;&#xFF1B;</li>
+<li>&#x4E3A;&#x4EC0;&#x4E48;&#x9009;&#x62E9;ASM&#xFF1B;</li>
+<li>ASM&#x4E2D;&#x7684;&#x6838;&#x5FC3;&#x7C7B;&#x548C;&#x6838;&#x5FC3;&#x65B9;&#x6CD5;&#xFF1B;</li>
+<li>ASM&#x793A;&#x4F8B;&#xFF1B;</li>
+</ol>
+<a id="more"></a>
+<h3 id="&#x4EC0;&#x4E48;&#x662F;ASM"><a href="#&#x4EC0;&#x4E48;&#x662F;ASM" class="headerlink" title="&#x4EC0;&#x4E48;&#x662F;ASM?"></a>&#x4EC0;&#x4E48;&#x662F;ASM?</h3><p>ASM&#x662F;&#x4E00;&#x4E2A;Java&#x5B57;&#x8282;&#x7801;&#x64CD;&#x63A7;&#x6846;&#x67B6;&#x3002;&#x5B83;&#x80FD;&#x88AB;&#x7528;&#x6765;&#x52A8;&#x6001;&#x751F;&#x6210;&#x7C7B;&#x6216;&#x8005;&#x589E;&#x5F3A;&#x65E2;&#x6709;&#x7C7B;&#x7684;&#x529F;&#x80FD;&#x3002;ASM&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x4EA7;&#x751F;&#x4E8C;&#x8FDB;&#x5236; class&#x6587;&#x4EF6;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x5728;&#x7C7B;&#x88AB;&#x52A0;&#x8F7D;&#x5165;Java&#x865A;&#x62DF;&#x673A;&#x4E4B;&#x524D;&#x52A8;&#x6001;&#x6539;&#x53D8;&#x7C7B;&#x884C;&#x4E3A;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x60F3;&#x4E86;&#x89E3;Java&#x865A;&#x62DF;&#x673A;&#x7684;&#x5DE5;&#x4F5C;&#x8FC7;&#x7A0B;&#x53EF;&#x53C2;&#x8003;<a href="https://xiongcen.github.io/2017/04/12/JVMWork/" target="_blank" rel="external">JVM&#x539F;&#x7406;&#x6D45;&#x6790;</a></p>
+<h3 id="&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x52A8;&#x6001;&#x751F;&#x6210;Java&#x7C7B;&#xFF1F;"><a href="#&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x52A8;&#x6001;&#x751F;&#x6210;Java&#x7C7B;&#xFF1F;" class="headerlink" title="&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x52A8;&#x6001;&#x751F;&#x6210;Java&#x7C7B;&#xFF1F;"></a>&#x4E3A;&#x4EC0;&#x4E48;&#x8981;&#x52A8;&#x6001;&#x751F;&#x6210;Java&#x7C7B;&#xFF1F;</h3><p>&#x4E3E;&#x4E2A;&#x4F8B;&#x5B50;&#xFF0C;&#x76EE;&#x524D;&#x6709;&#x4E00;&#x4E2A;&#x65E2;&#x6709;&#x7684;&#x94F6;&#x884C;&#x7BA1;&#x7406;&#x7CFB;&#x7EDF;&#xFF0C;&#x5305;&#x62EC;Bank&#x3001;Customer&#x3001;Account&#x3001;Invoice&#x7B49;&#x5BF9;&#x8C61;&#xFF0C;&#x73B0;&#x5728;&#x8981;&#x52A0;&#x5165;&#x4E00;&#x4E2A;&#x5B89;&#x5168;&#x68C0;&#x67E5;&#x6A21;&#x5757;&#xFF0C;&#x5BF9;&#x5DF2;&#x6709;&#x7C7B;&#x7684;&#x6240;&#x6709;&#x64CD;&#x4F5C;&#x4E4B;&#x524D;&#x90FD;&#x5FC5;&#x987B;&#x8FDB;&#x884C;&#x4E00;&#x6B21;&#x5B89;&#x5168;&#x68C0;&#x67E5;&#x3002;</p>
+<p><img src="/2017/04/25/ASM/01.jpg" alt=""></p>
+<p>&#x7136;&#x800C; Bank&#x3001;Customer&#x3001;Account&#x3001;Invoice &#x662F;&#x4EE3;&#x8868;&#x4E0D;&#x540C;&#x7684;&#x4E8B;&#x52A1;&#xFF0C;&#x6D3E;&#x751F;&#x81EA;&#x4E0D;&#x540C;&#x7684;&#x7236;&#x7C7B;&#xFF0C;&#x5F88;&#x96BE;&#x5728;&#x9AD8;&#x5C42;&#x4E0A;&#x52A0;&#x5165;&#x5173;&#x4E8E;Security Checker&#x7684;&#x5171;&#x6709;&#x529F;&#x80FD;&#x3002;&#x5BF9;&#x4E8E;&#x6CA1;&#x6709;&#x591A;&#x7EE7;&#x627F;&#x7684;Java&#x6765;&#x8BF4;&#xFF0C;&#x66F4;&#x662F;&#x5982;&#x6B64;&#x3002;</p>
+<p>&#x4F20;&#x7EDF;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#x662F;&#x4F7F;&#x7528;&#x88C5;&#x9970;&#x5668;&#x6A21;&#x5F0F;&#xFF0C;<a href="http://blog.qiji.tech/archives/11823" target="_blank" rel="external">&#x88C5;&#x9970;&#x5668;&#x6A21;&#x5F0F;&#x52A8;&#x6001;&#x7684;&#x5C06;&#x8D23;&#x4EFB;&#x94FE;&#x9644;&#x52A0;&#x5230;&#x5BF9;&#x8C61;&#x4E0A;&#xFF0C;&#x82E5;&#x8981;&#x6269;&#x5C55;&#x529F;&#x80FD;&#xFF0C;&#x88C5;&#x9970;&#x8005;&#x63D0;&#x4F9B;&#x4E86;&#x6BD4;&#x7EE7;&#x627F;&#x66F4;&#x52A0;&#x5BCC;&#x6709;&#x5F39;&#x6027;&#x7684;&#x4EE3;&#x66FF;&#x65B9;&#x6848;</a>&#x3002;</p>
+<p>&#x88C5;&#x9970;&#x5668;&#x6A21;&#x5F0F;&#x53EF;&#x4EE5;&#x5728;&#x4E00;&#x5B9A;&#x7A0B;&#x5EA6;&#x4E0A;&#x6539;&#x5584;&#x8026;&#x5408;&#xFF0C;&#x800C;&#x529F;&#x80FD;&#x4ECD;&#x65E7;&#x662F;&#x5206;&#x6563;&#x7684;&#xFF0C;&#x6BCF;&#x4E2A;&#x9700;&#x8981;Security Checker&#x7684;&#x7C7B;&#x90FD;&#x5FC5;&#x987B;&#x6D3E;&#x751F;&#x4E00;&#x4E2A;Decorator&#xFF0C;&#x6BCF;&#x4E2A;&#x9700;&#x8981;Security Checker&#x7684;&#x65B9;&#x6CD5;&#x90FD;&#x8981;&#x88AB;&#x5305;&#x88C5;&#xFF08;wrap&#xFF09;&#x3002;</p>
+<p>&#x4E0B;&#x9762;&#x6211;&#x4EEC;&#x4EE5; Account&#x7C7B;&#x4E3A;&#x4F8B;&#x770B;&#x4E00;&#x4E0B;Decorator&#xFF1A;</p>
+<p>&#x9996;&#x5148;&#xFF0C;&#x6709;&#x4E00;&#x4E2A;SecurityChecker&#x7C7B;&#xFF0C;&#x5176;&#x9759;&#x6001;&#x65B9;&#x6CD5;checkSecurity&#x6267;&#x884C;&#x5B89;&#x5168;&#x68C0;&#x67E5;&#x529F;&#x80FD;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public class SecurityChecker {</div><div class="line"></div><div class="line">    public static void checkSecurity() {</div><div class="line">        System.out.println(&quot;SecurityChecker.checkSecurity ...&quot;);</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x53E6;&#x4E00;&#x4E2A;&#x662F;Account&#x7C7B;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public class Account {</div><div class="line"></div><div class="line">    public void operation() {</div><div class="line">        System.out.println(&quot;operation...&quot;);</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x82E5;&#x60F3;&#x5BF9;operation&#x52A0;&#x5165;&#x5BF9;SecurityCheck.checkSecurity()&#x8C03;&#x7528;&#xFF0C;&#x6807;&#x51C6;&#x7684;Decorator&#x9700;&#x8981;&#x5148;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A; Account&#x7C7B;&#x7684;&#x63A5;&#x53E3;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface IAccount {</div><div class="line"></div><div class="line">    void operation();</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x7136;&#x540E;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;&#x5B9E;&#x73B0;&#x7C7B;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public class AccountImpl implements IAccount {</div><div class="line">    @Override</div><div class="line">    public void operation() {</div><div class="line">        System.out.println(&quot;operation...&quot;);</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;AccountImpl&#x7C7B;&#x7684;Decorator&#xFF0C;&#x5E76;&#x5305;&#x88C5;operation&#x65B9;&#x6CD5;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class AccountWithSecurityCheck implements IAccount {</div><div class="line">    private IAccount account;</div><div class="line"></div><div class="line">    public AccountWithSecurityCheck(IAccount IAccount) {</div><div class="line">        this.account = IAccount;</div><div class="line">    }</div><div class="line"></div><div class="line">    public void operation() {</div><div class="line">        SecurityChecker.checkSecurity();</div><div class="line">        account.operation();</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x6700;&#x540E;&#x7684;&#x8C03;&#x7528;&#x65B9;&#x5F0F;&#x4E3A;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public class Test {</div><div class="line"></div><div class="line">    public static void main(String[] args) throws Exception {</div><div class="line"></div><div class="line">        // 1.&#x4F7F;&#x7528;&#x5305;&#x88C5;&#x7C7B;</div><div class="line">		AccountWithSecurityCheck account = new AccountWithSecurityCheck(new AccountImpl());</div><div class="line">		account.operation();</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x5728;&#x8FD9;&#x4E2A;&#x7B80;&#x5355;&#x7684;&#x4F8B;&#x5B50;&#x91CC;&#xFF0C;&#x6539;&#x9020;&#x4E00;&#x4E2A;&#x7C7B;&#x7684;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;&#x8FD8;&#x597D;&#xFF0C;&#x5982;&#x679C;&#x662F;&#x53D8;&#x52A8;&#x6574;&#x4E2A;&#x6A21;&#x5757;&#xFF0C;Decorator&#x5F88;&#x5FEB;&#x5C31;&#x4F1A;&#x6F14;&#x5316;&#x6210;&#x53E6;&#x4E00;&#x4E2A;&#x5669;&#x68A6;&#x3002;&#x52A8;&#x6001;&#x6539;&#x53D8;Java&#x7C7B;&#x5C31;&#x662F;&#x8981;&#x89E3;&#x51B3;AOP&#x7684;&#x95EE;&#x9898;&#xFF0C;&#x63D0;&#x4F9B;&#x4E00;&#x79CD;&#x5F97;&#x5230;&#x7CFB;&#x7EDF;&#x652F;&#x6301;&#x7684;&#x53EF;&#x7F16;&#x7A0B;&#x7684;&#x65B9;&#x6CD5;&#xFF0C;&#x81EA;&#x52A8;&#x5316;&#x5730;&#x751F;&#x6210;&#x6216;&#x8005;&#x589E;&#x5F3A;Java&#x4EE3;&#x7801;&#x3002;</p>
+<h3 id="&#x4E3A;&#x4EC0;&#x4E48;&#x9009;&#x62E9;ASM&#xFF1F;"><a href="#&#x4E3A;&#x4EC0;&#x4E48;&#x9009;&#x62E9;ASM&#xFF1F;" class="headerlink" title="&#x4E3A;&#x4EC0;&#x4E48;&#x9009;&#x62E9;ASM&#xFF1F;"></a>&#x4E3A;&#x4EC0;&#x4E48;&#x9009;&#x62E9;ASM&#xFF1F;</h3><p>&#x6700;&#x76F4;&#x63A5;&#x7684;&#x6539;&#x9020;Java&#x7C7B;&#x7684;&#x65B9;&#x6CD5;&#x83AB;&#x8FC7;&#x4E8E;&#x76F4;&#x63A5;&#x6539;&#x5199;class&#x6587;&#x4EF6;&#x3002;Java &#x89C4;&#x8303;&#x8BE6;&#x7EC6;&#x8BF4;&#x660E;&#x4E86;class&#x6587;&#x4EF6;&#x7684;&#x683C;&#x5F0F;&#xFF0C;&#x76F4;&#x63A5;&#x7F16;&#x8F91;&#x5B57;&#x8282;&#x7801;&#x786E;&#x5B9E;&#x53EF;&#x4EE5;&#x6539;&#x53D8;Java&#x7C7B;&#x7684;&#x884C;&#x4E3A;&#x3002;</p>
+<p>&#x8FD8;&#x6709;&#x4E00;&#x79CD;&#x6BD4;&#x8F83;&#x7406;&#x60F3;&#x4E14;&#x6D41;&#x884C;&#x7684;&#x65B9;&#x5F0F;&#x662F;&#x662F;&#x4F7F;&#x7528;java.lang.reflect.Proxy&#x3002;&#x6211;&#x4EEC;&#x4ECD;&#x65E7;&#x4F7F;&#x7528;&#x4EE5;&#x4E0A;&#x7684;&#x4F8B;&#x5B50;&#xFF0C;&#x7ED9;Account&#x7C7B;&#x52A0;&#x4E0A;checkSecurity&#x529F;&#x80FD;&#x3002;</p>
+<p>&#x9996;&#x5148;&#xFF0C;Proxy&#x7F16;&#x7A0B;&#x662F;&#x9762;&#x5411;&#x63A5;&#x53E3;&#x7684;&#xFF0C;Proxy&#x5E76;&#x4E0D;&#x8D1F;&#x8D23;&#x5B9E;&#x4F8B;&#x5316;&#x5BF9;&#x8C61;&#xFF0C;&#x548C;Decorator&#x6A21;&#x5F0F;&#x4E00;&#x6837;&#xFF0C;&#x8981;&#x628A;Account&#x5B9A;&#x4E49;&#x6210;&#x4E00;&#x4E2A;&#x63A5;&#x53E3;&#xFF0C;&#x7136;&#x540E;&#x5728;AccountImpl&#x91CC;&#x5B9E;&#x73B0;Account&#x63A5;&#x53E3;&#xFF0C;&#x63A5;&#x7740;&#x5B9E;&#x73B0;&#x4E00;&#x4E2A;InvocationHandlerAccount&#x65B9;&#x6CD5;&#x88AB;&#x8C03;&#x7528;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x865A;&#x62DF;&#x673A;&#x90FD;&#x4F1A;&#x5B9E;&#x9645;&#x8C03;&#x7528;&#x8FD9;&#x4E2A;InvocationHandler&#x7684;invoke&#x65B9;&#x6CD5;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class SecurityProxyInvocationHandler implements InvocationHandler {</div><div class="line"></div><div class="line">    private Object proxyedObject;</div><div class="line"></div><div class="line">    public SecurityProxyInvocationHandler(Object o) {</div><div class="line">        proxyedObject = o;</div><div class="line">    }</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {</div><div class="line"></div><div class="line">        if (proxy instanceof IAccount &amp;&amp; &quot;operation&quot;.equals(method.getName())) {</div><div class="line">            SecurityChecker.checkSecurity();</div><div class="line">        }</div><div class="line">        return method.invoke(proxyedObject, args);</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x6700;&#x540E;&#xFF0C;&#x5728;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x4E2D;&#x6307;&#x5B9A;InvocationHandler&#x751F;&#x6210;&#x4EE3;&#x7406;&#x5BF9;&#x8C61;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">public class Test {</div><div class="line"></div><div class="line">    public static void main(String[] args) throws Exception {</div><div class="line"></div><div class="line">        // 2.&#x4F7F;&#x7528;&#x4EE3;&#x7406;</div><div class="line">		IAccount account = (IAccount) Proxy.newProxyInstance(</div><div class="line">	          IAccount.class.getClassLoader(),</div><div class="line">	          new Class[]{IAccount.class},</div><div class="line">              new SecurityProxyInvocationHandler(new AccountImpl()));</div><div class="line">		account.operation();</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x5176;&#x4E0D;&#x8DB3;&#x4E4B;&#x5904;&#x5728;&#x4E8E;&#xFF1A;</p>
+<ul>
+<li><p>Proxy&#x662F;&#x9762;&#x5411;&#x63A5;&#x53E3;&#x7684;&#xFF0C;&#x6240;&#x6709;&#x4F7F;&#x7528;Proxy&#x7684;&#x5BF9;&#x8C61;&#x90FD;&#x5FC5;&#x987B;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;&#x63A5;&#x53E3;&#xFF0C;&#x800C;&#x4E14;&#x7528;&#x8FD9;&#x4E9B;&#x5BF9;&#x8C61;&#x7684;&#x4EE3;&#x7801;&#x4E5F;&#x5FC5;&#x987B;&#x662F;&#x5BF9;&#x63A5;&#x53E3;&#x7F16;&#x7A0B;&#x7684;&#xFF1A;Proxy&#x751F;&#x6210;&#x7684;&#x5BF9;&#x8C61;&#x662F;&#x63A5;&#x53E3;&#x4E00;&#x81F4;&#x7684;&#x800C;&#x4E0D;&#x662F;&#x5BF9;&#x8C61;&#x4E00;&#x81F4;&#x7684;&#xFF1A;&#x4F8B;&#x5B50;&#x4E2D;Proxy.newProxyInstance&#x751F;&#x6210;&#x7684;&#x662F;&#x5B9E;&#x73B0;IAccount&#x63A5;&#x53E3;&#x7684;&#x5BF9;&#x8C61;&#x800C;&#x4E0D;&#x662F;AccountImpl&#x7684;&#x5B50;&#x7C7B;&#x3002;&#x8FD9;&#x5BF9;&#x4E8E;&#x8F6F;&#x4EF6;&#x67B6;&#x6784;&#x8BBE;&#x8BA1;&#xFF0C;&#x5C24;&#x5176;&#x5BF9;&#x4E8E;&#x65E2;&#x6709;&#x8F6F;&#x4EF6;&#x7CFB;&#x7EDF;&#x662F;&#x6709;&#x4E00;&#x5B9A;&#x63A3;&#x8098;&#x7684;&#x3002;</p>
+</li>
+<li><p>Proxy&#x6BD5;&#x7ADF;&#x662F;&#x901A;&#x8FC7;&#x53CD;&#x5C04;&#x5B9E;&#x73B0;&#x7684;&#xFF0C;&#x5FC5;&#x987B;&#x5728;&#x6548;&#x7387;&#x4E0A;&#x4ED8;&#x51FA;&#x4EE3;&#x4EF7;&#xFF1A;&#x6709;&#x5B9E;&#x9A8C;&#x6570;&#x636E;&#x8868;&#x660E;&#xFF0C;&#x8C03;&#x7528;&#x53CD;&#x5C04;&#x6BD4;&#x4E00;&#x822C;&#x7684;&#x51FD;&#x6570;&#x5F00;&#x9500;&#x81F3;&#x5C11;&#x8981;&#x5927;10&#x500D;&#x3002;&#x800C;&#x4E14;&#xFF0C;&#x4ECE;&#x7A0B;&#x5E8F;&#x5B9E;&#x73B0;&#x4E0A;&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#xFF0C;&#x5BF9;proxy class&#x7684;&#x6240;&#x6709;&#x65B9;&#x6CD5;&#x8C03;&#x7528;&#x90FD;&#x8981;&#x901A;&#x8FC7;&#x4F7F;&#x7528;&#x53CD;&#x5C04;&#x7684;invoke&#x65B9;&#x6CD5;&#x3002;&#x56E0;&#x6B64;&#xFF0C;&#x5BF9;&#x4E8E;&#x6027;&#x80FD;&#x5173;&#x952E;&#x7684;&#x5E94;&#x7528;&#xFF0C;&#x4F7F;&#x7528;proxy class&#x662F;&#x9700;&#x8981;&#x7CBE;&#x5FC3;&#x8003;&#x8651;&#x7684;&#xFF0C;&#x4EE5;&#x907F;&#x514D;&#x53CD;&#x5C04;&#x6210;&#x4E3A;&#x6574;&#x4E2A;&#x5E94;&#x7528;&#x7684;&#x74F6;&#x9888;&#x3002;</p>
+</li>
+</ul>
+<p>ASM&#x80FD;&#x591F;&#x901A;&#x8FC7;&#x6539;&#x9020;&#x65E2;&#x6709;&#x7C7B;&#xFF0C;&#x76F4;&#x63A5;&#x751F;&#x6210;&#x9700;&#x8981;&#x7684;&#x4EE3;&#x7801;&#x3002;&#x589E;&#x5F3A;&#x7684;&#x4EE3;&#x7801;&#x662F;&#x786C;&#x7F16;&#x7801;&#x5728;&#x65B0;&#x751F;&#x6210;&#x7684;&#x7C7B;&#x6587;&#x4EF6;&#x5185;&#x90E8;&#x7684;&#xFF0C;&#x6CA1;&#x6709;&#x53CD;&#x5C04;&#x5E26;&#x6765;&#x6027;&#x80FD;&#x4E0A;&#x7684;&#x4ED8;&#x51FA;&#x3002;&#x540C;&#x65F6;&#xFF0C;ASM&#x4E0E;Proxy&#x7F16;&#x7A0B;&#x4E0D;&#x540C;&#xFF0C;&#x4E0D;&#x9700;&#x8981;&#x4E3A;&#x589E;&#x5F3A;&#x4EE3;&#x7801;&#x800C;&#x65B0;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;&#x63A5;&#x53E3;&#xFF0C;&#x751F;&#x6210;&#x7684;&#x4EE3;&#x7801;&#x53EF;&#x4EE5;&#x8986;&#x76D6;&#x539F;&#x6765;&#x7684;&#x7C7B;&#xFF0C;&#x6216;&#x8005;&#x662F;&#x539F;&#x59CB;&#x7C7B;&#x7684;&#x5B50;&#x7C7B;&#x3002;&#x5B83;&#x662F;&#x4E00;&#x4E2A;&#x666E;&#x901A;&#x7684;Java&#x7C7B;&#x800C;&#x4E0D;&#x662F;Proxy&#x7C7B;&#xFF0C;&#x751A;&#x81F3;&#x53EF;&#x4EE5;&#x5728;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x7684;&#x7C7B;&#x6846;&#x67B6;&#x4E2D;&#x62E5;&#x6709;&#x81EA;&#x5DF1;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x6D3E;&#x751F;&#x81EA;&#x5DF1;&#x7684;&#x5B50;&#x7C7B;&#x3002;</p>
+<h3 id="ASM&#x4F7F;&#x7528;"><a href="#ASM&#x4F7F;&#x7528;" class="headerlink" title="ASM&#x4F7F;&#x7528;"></a>ASM&#x4F7F;&#x7528;</h3><h4 id="&#x4F7F;&#x7528;javap-c&#x547D;&#x4EE4;&#x67E5;&#x770B;Account&#x7C7B;&#x7684;&#x5B57;&#x8282;&#x7801;"><a href="#&#x4F7F;&#x7528;javap-c&#x547D;&#x4EE4;&#x67E5;&#x770B;Account&#x7C7B;&#x7684;&#x5B57;&#x8282;&#x7801;" class="headerlink" title="&#x4F7F;&#x7528;javap -c&#x547D;&#x4EE4;&#x67E5;&#x770B;Account&#x7C7B;&#x7684;&#x5B57;&#x8282;&#x7801;"></a>&#x4F7F;&#x7528;javap -c&#x547D;&#x4EE4;&#x67E5;&#x770B;Account&#x7C7B;&#x7684;&#x5B57;&#x8282;&#x7801;</h4><p><img src="/2017/04/25/ASM/02.png" alt=""></p>
+<p>5-9&#x884C;&#x8868;&#x793A;&#x7684;&#x662F;&#x4E00;&#x4E2A;&#x7684;&#x9ED8;&#x8BA4;&#x6784;&#x9020;&#x65B9;&#x6CD5;&#xFF0C;&#x662F;&#x7F16;&#x8BD1;&#x5668;&#x4E3A;&#x6211;&#x4EEC;&#x81EA;&#x52A8;&#x6DFB;&#x52A0;&#x7684;&#x3002;&#x53C2;&#x8003;&#x6765;&#x81EA;<a href="https://my.oschina.net/u/1166271/blog/162796" target="_blank" rel="external">&#x6DF1;&#x5165;&#x5B57;&#x8282;&#x7801; &#x2013; &#x4F7F;&#x7528; ASM &#x5B9E;&#x73B0; AOP</a></p>
+<p>11-&#x7ED3;&#x675F;&#x8868;&#x793A;&#x6211;&#x4EEC;&#x7F16;&#x5199;&#x7684;operation&#x65B9;&#x6CD5;&#x3002;</p>
+<p>aload_0:&#x8FD9;&#x4E2A;&#x6307;&#x4EE4;&#x662F;LOAD&#x7CFB;&#x5217;&#x6307;&#x4EE4;&#x4E2D;&#x7684;&#x4E00;&#x4E2A;&#xFF0C;&#x5B83;&#x7684;&#x610F;&#x601D;&#x8868;&#x793A;&#x88C5;&#x8F7D;&#x5F53;&#x524D;&#x7B2C;0&#x4E2A;&#x5143;&#x7D20;&#x5230;&#x5806;&#x6808;&#x4E2D;&#x3002;&#x4EE3;&#x7801;&#x4E0A;&#x76F8;&#x5F53;&#x4E8E;&#x201C;this&#x201D;&#x3002;</p>
+<p>invokespecial&#xFF1A;&#x8FD9;&#x4E2A;&#x6307;&#x4EE4;&#x662F;&#x8C03;&#x7528;&#x7CFB;&#x5217;&#x6307;&#x4EE4;&#x4E2D;&#x7684;&#x4E00;&#x4E2A;&#x3002;&#x5176;&#x76EE;&#x7684;&#x662F;&#x8C03;&#x7528;&#x5BF9;&#x8C61;&#x7C7B;&#x7684;&#x65B9;&#x6CD5;&#x3002;&#x540E;&#x9762;&#x9700;&#x8981;&#x7ED9;&#x4E0A;&#x7236;&#x7C7B;&#x7684;&#x65B9;&#x6CD5;&#x5B8C;&#x6574;&#x7B7E;&#x540D;&#x3002;&#x201C;#1&#x201D;&#x7684;&#x610F;&#x601D;&#x662F;class&#x6587;&#x4EF6;&#x5E38;&#x91CF;&#x8868;&#x4E2D;&#x7B2C;1&#x4E2A;&#x5143;&#x7D20;&#x3002;&#x503C;&#x4E3A;&#xFF1A;&#x201C;java/lang/Object.&#x201D;<init>&#x201D;:()V&#x201D;&#x3002;&#x7ED3;&#x5408;aload_0&#x3002;&#x8FD9;&#x4E24;&#x4E2A;&#x6307;&#x4EE4;&#x53EF;&#x4EE5;&#x7FFB;&#x8BD1;&#x4E3A;&#xFF1A;&#x201C;super()&#x201D;&#x3002;&#x5176;&#x542B;&#x4E49;&#x662F;&#x8C03;&#x7528;&#x81EA;&#x5DF1;&#x7684;&#x7236;&#x7C7B;&#x6784;&#x9020;&#x65B9;&#x6CD5;&#x3002;</init></p>
+<p>getstatic:&#x8FD9;&#x4E2A;&#x6307;&#x4EE4;&#x662F;GET&#x7CFB;&#x5217;&#x6307;&#x4EE4;&#x4E2D;&#x7684;&#x4E00;&#x4E2A;&#xFF0C;&#x5176;&#x4F5C;&#x7528;&#x662F;&#x83B7;&#x53D6;&#x9759;&#x6001;&#x5B57;&#x6BB5;&#x5185;&#x5BB9;&#x5230;&#x5806;&#x6808;&#x4E2D;&#x3002;</p>
+<p>ldc:&#x4ECE;&#x5E38;&#x91CF;&#x8868;&#x4E2D;&#x88C5;&#x8F7D;&#x4E00;&#x4E2A;&#x6570;&#x636E;&#x5230;&#x5806;&#x6808;&#x4E2D;&#x3002;</p>
+<p>invokevirtual&#xFF1A;&#x4E5F;&#x662F;&#x4E00;&#x79CD;&#x8C03;&#x7528;&#x6307;&#x4EE4;&#xFF0C;&#x8FD9;&#x4E2A;&#x6307;&#x4EE4;&#x533A;&#x522B;&#x4E0E;invokespecial&#x7684;&#x662F;&#x5B83;&#x662F;&#x6839;&#x636E;&#x5F15;&#x7528;&#x8C03;&#x7528;&#x5BF9;&#x8C61;&#x7C7B;&#x7684;&#x65B9;&#x6CD5;&#x3002;</p>
+<p>return:&#x4E5F;&#x662F;&#x4E00;&#x7CFB;&#x5217;&#x6307;&#x4EE4;&#x4E2D;&#x7684;&#x4E00;&#x4E2A;&#xFF0C;&#x5176;&#x76EE;&#x7684;&#x662F;&#x65B9;&#x6CD5;&#x8C03;&#x7528;&#x5B8C;&#x6BD5;&#x8FD4;&#x56DE;&#xFF1A;&#x53EF;&#x7528;&#x7684;&#x5176;&#x4ED6;&#x6307;&#x4EE4;&#x6709;&#xFF1A;IRETURN&#xFF0C;DRETURN&#xFF0C;ARETURN&#x7B49;&#xFF0C;&#x7528;&#x4E8E;&#x8868;&#x793A;&#x4E0D;&#x540C;&#x7C7B;&#x578B;&#x53C2;&#x6570;&#x7684;&#x8FD4;&#x56DE;&#x3002;</p>
+<p>invokespecial&#x548C;invokevirtual&#x7684;&#x4E3B;&#x8981;&#x533A;&#x522B;&#x5728;&#x4E8E;: invokespecial&#x901A;&#x5E38;&#x6839;&#x636E;&#x5F15;&#x7528;&#x7684;&#x7C7B;&#x578B;&#x9009;&#x62E9;&#x65B9;&#x6CD5;&#xFF0C;&#x800C;&#x4E0D;&#x662F;&#x6839;&#x636E;&#x5BF9;&#x8C61;&#x7684;&#x7C7B;&#x6765;&#x9009;&#x62E9;&#x3002;</p>
+<h4 id="IntelliJ&#x4E2D;ASM&#x7684;&#x63D2;&#x4EF6;"><a href="#IntelliJ&#x4E2D;ASM&#x7684;&#x63D2;&#x4EF6;" class="headerlink" title="IntelliJ&#x4E2D;ASM&#x7684;&#x63D2;&#x4EF6;"></a>IntelliJ&#x4E2D;ASM&#x7684;&#x63D2;&#x4EF6;</h4><p>ASM Bytecode Outline</p>
+<p>&#x4F7F;&#x7528;&#x65B9;&#x5F0F;&#xFF1A;</p>
+<ol>
+<li>&#x751F;&#x6210;&#x5BF9;&#x5E94;&#x7684;.class&#x6587;&#x4EF6;&#xFF1B;</li>
+<li>Code-Show Bytecode Outline</li>
+</ol>
+<p>&#x6211;&#x4EEC;&#x5199;&#x4E00;&#x4E2A;&#x4EE3;&#x7801;&#x793A;&#x4F8B;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public class AccountASM {</div><div class="line"></div><div class="line">    public void operation() {</div><div class="line">        SecurityChecker.checkSecurity();</div><div class="line">        System.out.println(&quot;operation...&quot;);</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x901A;&#x8FC7;&#x4E0A;&#x8FF0;&#x65B9;&#x5F0F;&#x67E5;&#x770B;ASM&#x4EE3;&#x7801;</p>
+<p><img src="/2017/04/25/ASM/03.png" alt=""></p>
+<p>&#x7EA2;&#x6846;&#x7684;&#x4EE3;&#x7801;&#x662F;&#x7528;ASM&#x8F93;&#x51FA;&#x6574;&#x4E2A;operation&#x65B9;&#x6CD5;&#x5B57;&#x8282;&#x7801;&#xFF1A;</p>
+<p>&#x7B2C;36&#x884C;&#xFF1A;&#x8868;&#x793A;&#x51C6;&#x5907;&#x8F93;&#x51FA;&#x4E00;&#x4E2A;&#x516C;&#x6709;&#x65B9;&#x6CD5;&#x201C;operation&#x201D;&#xFF0C;ACC_PUBLIC&#x8868;&#x793A;&#x516C;&#x6709;&#xFF0C;&#x76F8;&#x5F53;&#x4E8E;public&#x4FEE;&#x9970;&#x7B26;&#xFF1B;&#x201C;()V&#x201D;&#x662F;&#x65B9;&#x6CD5;&#x7684;&#x53C2;&#x6570;&#x5305;&#x62EC;&#x8FD4;&#x56DE;&#x503C;&#x7B7E;&#x540D;&#xFF0C;&#x201C;V&#x201D;&#x662F;void&#x7684;&#x7F29;&#x5199;&#xFF0C;&#x8868;&#x793A;&#x65E0;&#x8FD4;&#x56DE;&#x503C;&#xFF1B;&#x540E;&#x9762;&#x4E24;&#x4E2A;null&#x5206;&#x522B;&#x662F;&#x65B9;&#x6CD5;&#x7684;&#x5F02;&#x5E38;&#x629B;&#x51FA;&#x4FE1;&#x606F;&#x548C;&#x5C5E;&#x6027;&#x4FE1;&#x606F;&#x3002;</p>
+<p>&#x7B2C;37&#x884C;&#xFF1A;&#x8868;&#x793A;&#x5F00;&#x59CB;&#x6B63;&#x5F0F;&#x8F93;&#x51FA;&#x65B9;&#x6CD5;&#x7684;&#x6267;&#x884C;&#x4EE3;&#x7801;&#x3002;</p>
+<p>&#x7B2C;41&#x884C;&#xFF1A;&#x8868;&#x793A;&#x8C03;&#x7528;&#x9759;&#x6001;&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x884C;&#x4EE3;&#x7801;&#x76F8;&#x5F53;&#x4E8E;&#x201C;SecurityChecker.checkSecurity();&#x201D;&#x3002;</p>
+<p>&#x4E0A;&#x9762;&#x7684;38&#xFF0C;39&#xFF0C;40&#xFF0C;42&#xFF0C;43&#xFF0C;44&#xFF0C;48&#xFF0C;49&#xFF0C;50&#x884C;&#x770B;&#x5230;&#x7684;&#x5185;&#x5BB9;&#x8868;&#x793A;Java&#x4EE3;&#x7801;&#x7684;&#x884C;&#x53F7;&#x6807;&#x8BB0;&#xFF0C;&#x53EF;&#x4EE5;&#x5220;&#x9664;&#x4E0D;&#x7528;&#x3002;</p>
+<p>&#x5728;&#x65B9;&#x6CD5;&#x7684;&#x6700;&#x540E;&#x90E8;&#x5206;&#x4EE3;&#x7801;52&#xFF0C;53&#xFF0C;54&#x884C;&#x8868;&#x793A;&#x5411;class&#x6587;&#x4EF6;&#x4E2D;&#x5199;&#x5165;&#x65B9;&#x6CD5;&#x672C;&#x5730;&#x53D8;&#x91CF;&#x8868;&#x7684;&#x540D;&#x79F0;&#x4EE5;&#x53CA;&#x7C7B;&#x578B;&#xFF0C;&#x53EF;&#x4EE5;&#x5220;&#x9664;&#x4E0D;&#x7528;&#x3002;</p>
+<p>&#x6240;&#x4EE5;&#x7CBE;&#x7B80;&#x7684;&#x4EE3;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">{</div><div class="line">      mv = cw.visitMethod(ACC_PUBLIC, &quot;operation&quot;, &quot;()V&quot;, null, null);</div><div class="line">      mv.visitCode();</div><div class="line">      mv.visitMethodInsn(INVOKESTATIC, &quot;com/xiongcen/asm/SecurityChecker&quot;, &quot;checkSecurity&quot;, &quot;()V&quot;, false);</div><div class="line">      mv.visitFieldInsn(GETSTATIC, &quot;java/lang/System&quot;, &quot;out&quot;, &quot;Ljava/io/PrintStream;&quot;);</div><div class="line">      mv.visitLdcInsn(&quot;operation...&quot;);</div><div class="line">      mv.visitMethodInsn(INVOKEVIRTUAL, &quot;java/io/PrintStream&quot;, &quot;println&quot;, &quot;(Ljava/lang/String;)V&quot;, false);</div><div class="line">      mv.visitInsn(RETURN);</div><div class="line">      mv.visitMaxs(2, 1);</div><div class="line">      mv.visitEnd();</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>01&#x884C;&#xFF1A;&#x76F8;&#x5F53;&#x4E8E;public void operation()&#x65B9;&#x6CD5;&#x58F0;&#x660E;&#xFF1B;</p>
+<p>02&#x884C;&#xFF1A;&#x6B63;&#x5F0F;&#x5F00;&#x59CB;&#x65B9;&#x6CD5;&#x5185;&#x5BB9;&#x7684;&#x586B;&#x5145;&#xFF1B;</p>
+<p>03&#x884C;&#xFF1A;&#x8C03;&#x7528;&#x9759;&#x6001;&#x65B9;&#x6CD5;&#xFF0C;&#x76F8;&#x5F53;&#x4E8E;&#x201C;SecurityChecker.checkSecurity();&#x201D;&#xFF1B;</p>
+<p>04&#x884C;&#xFF1A;&#x53D6;&#x5F97;&#x4E00;&#x4E2A;&#x9759;&#x6001;&#x5B57;&#x6BB5;&#x5C06;&#x5176;&#x653E;&#x5165;&#x5806;&#x6808;&#xFF0C;&#x76F8;&#x5F53;&#x4E8E;&#x201C;System.out&#x201D;&#x3002;&#x201C;Ljava/io/PrintStream;&#x201D;&#x662F;&#x5B57;&#x6BB5;&#x7C7B;&#x578B;&#x7684;&#x63CF;&#x8FF0;&#xFF0C;&#x7FFB;&#x8BD1;&#x8FC7;&#x6765;&#x76F8;&#x5F53;&#x4E8E;&#xFF1A;&#x201C;java.io.PrintStream&#x201D;&#x7C7B;&#x578B;&#x3002;&#x5728;&#x5B57;&#x8282;&#x7801;&#x4E2D;&#x51E1;&#x662F;&#x5F15;&#x7528;&#x7C7B;&#x578B;&#x5747;&#x7531;&#x201C;L&#x201D;&#x5F00;&#x5934;&#x201C;;&#x201D;&#x7ED3;&#x675F;&#x8868;&#x793A;&#xFF0C;&#x4E2D;&#x95F4;&#x662F;&#x7C7B;&#x578B;&#x7684;&#x5B8C;&#x6574;&#x540D;&#x79F0;&#xFF1B;</p>
+<p>05&#x884C;&#xFF1A;&#x5C06;&#x5B57;&#x7B26;&#x4E32;&#x201C;operation&#x2026;&#x201D;&#x653E;&#x5165;&#x5806;&#x6808;&#xFF0C;&#x6B64;&#x65F6;&#x5BF9;&#x6218;&#x4E2D;&#x7B2C;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#x662F;&#x201C;System.out&#x201D;&#xFF0C;&#x7B2C;&#x4E8C;&#x4E2A;&#x5143;&#x7D20;&#x662F;&#x201D;operation&#x2026;&#x201D;</p>
+<p>06&#x884C;&#xFF1A;&#x8C03;&#x7528;PrintStream&#x7C7B;&#x578B;&#x7684;&#x201C;println&#x201D;&#x65B9;&#x6CD5;&#x3002;&#x7B7E;&#x540D;&#x201C;(Ljava/lang/String;)V&#x201D;&#x8868;&#x793A;&#x65B9;&#x6CD5;&#x9700;&#x8981;&#x4E00;&#x4E2A;&#x5B57;&#x7B26;&#x4E32;&#x7C7B;&#x578B;&#x7684;&#x53C2;&#x6570;&#xFF0C;&#x5E76;&#x4E14;&#x65E0;&#x8FD4;&#x56DE;&#x503C;&#x3002;</p>
+<p>07&#x884C;&#xFF1A;&#x662F;JVM&#x5728;&#x7F16;&#x8BD1;&#x65F6;&#x4E3A;&#x65B9;&#x6CD5;&#x81EA;&#x52A8;&#x52A0;&#x4E0A;&#x7684;&#x201C;return&#x201D;&#x6307;&#x4EE4;&#x3002;&#x8BE5;&#x6307;&#x4EE4;&#x5FC5;&#x987B;&#x5728;&#x65B9;&#x6CD5;&#x7ED3;&#x675F;&#x65F6;&#x6267;&#x884C;&#x4E0D;&#x53EF;&#x7F3A;&#x5C11;&#x3002;</p>
+<p>08&#x884C;&#xFF1A;&#x8868;&#x793A;&#x5728;&#x6267;&#x884C;&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x671F;&#x95F4;&#x65B9;&#x6CD5;&#x7684;&#x5806;&#x6808;&#x7A7A;&#x95F4;&#x6700;&#x5927;&#x7ED9;&#x4E88;&#x591A;&#x5C11;&#x3002;</p>
+<p>09&#x884C;&#xFF1A;&#x8868;&#x793A;&#x65B9;&#x6CD5;&#x8F93;&#x51FA;&#x7ED3;&#x675F;&#x3002;</p>
+<h4 id="ASM&#x6846;&#x67B6;&#x4E2D;&#x7684;&#x6838;&#x5FC3;&#x7C7B;"><a href="#ASM&#x6846;&#x67B6;&#x4E2D;&#x7684;&#x6838;&#x5FC3;&#x7C7B;" class="headerlink" title="ASM&#x6846;&#x67B6;&#x4E2D;&#x7684;&#x6838;&#x5FC3;&#x7C7B;"></a>ASM&#x6846;&#x67B6;&#x4E2D;&#x7684;&#x6838;&#x5FC3;&#x7C7B;</h4><p>ClassVisitor&#x63A5;&#x53E3;&#xFF1A;&#x5B9A;&#x4E49;&#x5728;&#x8BFB;&#x53D6;Class&#x5B57;&#x8282;&#x7801;&#x65F6;&#x4F1A;&#x89E6;&#x53D1;&#x7684;&#x4E8B;&#x4EF6;&#xFF0C;&#x5982;&#x7C7B;&#x5934;&#x89E3;&#x6790;&#x5B8C;&#x6210;&#x3001;&#x6CE8;&#x89E3;&#x89E3;&#x6790;&#x3001;&#x5B57;&#x6BB5;&#x89E3;&#x6790;&#x3001;&#x65B9;&#x6CD5;&#x89E3;&#x6790;&#x7B49;&#x3002;&#x6BCF;&#x5F53;&#x6709;&#x4E8B;&#x4EF6;&#x53D1;&#x751F;&#x65F6;&#xFF0C;&#x8C03;&#x7528;&#x6CE8;&#x518C;&#x7684;ClassVisitor&#x3001;AnnotationVisitor&#x3001;FieldVisitor&#x3001;MethodVisitor&#x505A;&#x76F8;&#x5E94;&#x7684;&#x5904;&#x7406;&#x3002;</p>
+<p>AnnotationVisitor&#x63A5;&#x53E3;&#xFF1A;&#x5B9A;&#x4E49;&#x5728;&#x89E3;&#x6790;&#x6CE8;&#x89E3;&#x65F6;&#x4F1A;&#x89E6;&#x53D1;&#x7684;&#x4E8B;&#x4EF6;&#xFF0C;&#x5982;&#x89E3;&#x6790;&#x5230;&#x4E00;&#x4E2A;&#x57FA;&#x672C;&#x503C;&#x7C7B;&#x578B;&#x7684;&#x6CE8;&#x89E3;&#x3001;enum&#x503C;&#x7C7B;&#x578B;&#x7684;&#x6CE8;&#x89E3;&#x3001;Array&#x503C;&#x7C7B;&#x578B;&#x7684;&#x6CE8;&#x89E3;&#x3001;&#x6CE8;&#x89E3;&#x503C;&#x7C7B;&#x578B;&#x7684;&#x6CE8;&#x89E3;&#x7B49;&#x3002;</p>
+<p>FieldVisitor&#x63A5;&#x53E3;&#xFF1A;&#x5B9A;&#x4E49;&#x5728;&#x89E3;&#x6790;&#x5B57;&#x6BB5;&#x65F6;&#x89E6;&#x53D1;&#x7684;&#x4E8B;&#x4EF6;&#xFF0C;&#x5982;&#x89E3;&#x6790;&#x5230;&#x5B57;&#x6BB5;&#x4E0A;&#x7684;&#x6CE8;&#x89E3;&#x3001;&#x89E3;&#x6790;&#x5230;&#x5B57;&#x6BB5;&#x76F8;&#x5173;&#x7684;&#x5C5E;&#x6027;&#x7B49;&#x3002;</p>
+<p>MethodVisitor&#x63A5;&#x53E3;&#xFF1A;&#x5B9A;&#x4E49;&#x5728;&#x89E3;&#x6790;&#x65B9;&#x6CD5;&#x65F6;&#x89E6;&#x53D1;&#x7684;&#x4E8B;&#x4EF6;&#xFF0C;&#x5982;&#x65B9;&#x6CD5;&#x4E0A;&#x7684;&#x6CE8;&#x89E3;&#x3001;&#x5C5E;&#x6027;&#x3001;&#x4EE3;&#x7801;&#x7B49;&#x3002;</p>
+<h5 id="ClassVisitor&#x63A5;&#x53E3;&#x6587;&#x6863;&#x8BF4;&#x660E;"><a href="#ClassVisitor&#x63A5;&#x53E3;&#x6587;&#x6863;&#x8BF4;&#x660E;" class="headerlink" title="ClassVisitor&#x63A5;&#x53E3;&#x6587;&#x6863;&#x8BF4;&#x660E;"></a><a href="asm.ow2.org/asm40/javadoc/user/org/objectweb/asm/ClassVisitor.html">ClassVisitor&#x63A5;&#x53E3;&#x6587;&#x6863;&#x8BF4;&#x660E;</a></h5><p><img src="/2017/04/25/ASM/04.png" alt=""></p>
+<p>&#x5BF9;&#x63A5;&#x53E3;&#x4E2D;&#x65B9;&#x6CD5;&#x7684;&#x8C03;&#x7528;&#x5FC5;&#x987B;&#x9075;&#x5B88;&#x4EE5;&#x4E0B;&#x89C4;&#x5219;&#xFF1A;</p>
+<p>visit-visitSource&#x65B9;&#x6CD5;(&#x4E00;&#x6B21;)-visitOuterClass(&#x4E00;&#x6B21;)-visitAnnotation|visitAttribute(&#x4EFB;&#x610F;)-visitInnerClass | visitField | visitMethod(&#x4EFB;&#x610F;)-visitEnd.</p>
+<h5 id="ClassVisitor&#x7684;&#x5173;&#x952E;&#x65B9;&#x6CD5;"><a href="#ClassVisitor&#x7684;&#x5173;&#x952E;&#x65B9;&#x6CD5;" class="headerlink" title="ClassVisitor&#x7684;&#x5173;&#x952E;&#x65B9;&#x6CD5;"></a>ClassVisitor&#x7684;&#x5173;&#x952E;&#x65B9;&#x6CD5;</h5><p>&#x53C2;&#x6570;&#x542B;&#x4E49;&#x8BF7;&#x53C2;&#x8003;<a href="https://my.oschina.net/u/1166271/blog/163637" target="_blank" rel="external">&#x6DF1;&#x5165;&#x5B57;&#x8282;&#x7801; &#x2013; ASM &#x5173;&#x952E;&#x63A5;&#x53E3; ClassVisitor</a></p>
+<p>1.visit(int version, int access, String name, String signature, String superName, String[] interfaces)&#xFF0C;&#x8BE5;&#x65B9;&#x6CD5;&#x662F;&#x5F53;&#x626B;&#x63CF;&#x7C7B;&#x65F6;&#x7B2C;&#x4E00;&#x4E2A;&#x8C03;&#x7528;&#x7684;&#x65B9;&#x6CD5;&#xFF0C;&#x4E3B;&#x8981;&#x7528;&#x4E8E;&#x7C7B;&#x7684;&#x58F0;&#x660E;&#x3002;</p>
+<p>visit(&#x7C7B;&#x7248;&#x672C;,&#x4FEE;&#x9970;&#x7B26;,&#x7C7B;&#x540D;,&#x6CDB;&#x578B;&#x4FE1;&#x606F;,&#x7EE7;&#x627F;&#x7684;&#x7236;&#x7C7B;,&#x5B9E;&#x73B0;&#x7684;&#x63A5;&#x53E3;)</p>
+<p>2.visitAnnotation(String desc, boolean visible)&#xFF0C;&#x8BE5;&#x65B9;&#x6CD5;&#x662F;&#x5F53;&#x626B;&#x63CF;&#x5668;&#x626B;&#x63CF;&#x5230;&#x7C7B;&#x6CE8;&#x89E3;&#x58F0;&#x660E;&#x65F6;&#x8FDB;&#x884C;&#x8C03;&#x7528;&#x3002;</p>
+<p>visitAnnotation(&#x6CE8;&#x89E3;&#x7C7B;&#x578B;,&#x6CE8;&#x89E3;&#x662F;&#x5426;&#x53EF;&#x4EE5;&#x5728;JVM&#x4E2D;&#x53EF;&#x89C1;)</p>
+<p>3.visitField(int access, String name, String desc, String signature, Object value)&#xFF0C;&#x8BE5;&#x65B9;&#x6CD5;&#x662F;&#x5F53;&#x626B;&#x63CF;&#x5668;&#x626B;&#x63CF;&#x5230;&#x7C7B;&#x4E2D;&#x5B57;&#x6BB5;&#x65F6;&#x8FDB;&#x884C;&#x8C03;&#x7528;&#x3002;</p>
+<p>visitField(&#x4FEE;&#x9970;&#x7B26;,&#x5B57;&#x6BB5;&#x540D;,&#x5B57;&#x6BB5;&#x7C7B;&#x578B;,&#x6CDB;&#x578B;&#x63CF;&#x8FF0;,&#x9ED8;&#x8BA4;&#x503C;)</p>
+<p>4.visitMethod(int access, String name, String desc, String signature, String[] exceptions)&#xFF0C;&#x8BE5;&#x65B9;&#x6CD5;&#x662F;&#x5F53;&#x626B;&#x63CF;&#x5668;&#x626B;&#x63CF;&#x5230;&#x7C7B;&#x7684;&#x65B9;&#x6CD5;&#x65F6;&#x8FDB;&#x884C;&#x8C03;&#x7528;&#x3002;</p>
+<p>visitMethod(&#x4FEE;&#x9970;&#x7B26;,&#x65B9;&#x6CD5;&#x540D;,&#x65B9;&#x6CD5;&#x7B7E;&#x540D;,&#x6CDB;&#x578B;&#x4FE1;&#x606F;,&#x629B;&#x51FA;&#x7684;&#x5F02;&#x5E38;)&#x3002;&#x65B9;&#x6CD5;&#x7B7E;&#x540D;&#x7684;&#x683C;&#x5F0F;&#x5982;&#x4E0B;&#xFF1A;&#x201C;(&#x53C2;&#x6570;&#x5217;&#x8868;)&#x8FD4;&#x56DE;&#x503C;&#x7C7B;&#x578B;&#x201D;&#x3002;&#x53C2;&#x8003;&#x7B7E;&#x540D;<a href="http://www.wangyuwei.me/2017/01/20/ASM-%E6%93%8D%E4%BD%9C%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%8E%A2/" target="_blank" rel="external">ASM &#x64CD;&#x4F5C;&#x5B57;&#x8282;&#x7801;&#x521D;&#x63A2;</a></p>
+<p>5.visitEnd()&#xFF0C;&#x8BE5;&#x65B9;&#x6CD5;&#x662F;&#x5F53;&#x626B;&#x63CF;&#x5668;&#x5B8C;&#x6210;&#x7C7B;&#x626B;&#x63CF;&#x65F6;&#x624D;&#x4F1A;&#x8C03;&#x7528;&#x3002;</p>
+<h5 id="ASM&#x7684;&#x4E09;&#x5927;&#x7EC4;&#x4EF6;"><a href="#ASM&#x7684;&#x4E09;&#x5927;&#x7EC4;&#x4EF6;" class="headerlink" title="ASM&#x7684;&#x4E09;&#x5927;&#x7EC4;&#x4EF6;"></a>ASM&#x7684;&#x4E09;&#x5927;&#x7EC4;&#x4EF6;</h5><p>ClassReader&#x7C7B;&#xFF1A;&#x8BE5;&#x7C7B;&#x7528;&#x6765;&#x89E3;&#x6790;&#x7F16;&#x8BD1;&#x8FC7;&#x7684;class&#x5B57;&#x8282;&#x7801;&#x6587;&#x4EF6;&#x3002;</p>
+<p>ClassWriter&#x7C7B;&#xFF1A;&#x8BE5;&#x7C7B;&#x7528;&#x6765;&#x91CD;&#x65B0;&#x6784;&#x5EFA;&#x7F16;&#x8BD1;&#x540E;&#x7684;&#x7C7B;&#xFF0C;&#x6BD4;&#x5982;&#x8BF4;&#x4FEE;&#x6539;&#x7C7B;&#x540D;&#x3001;&#x5C5E;&#x6027;&#x4EE5;&#x53CA;&#x65B9;&#x6CD5;&#xFF0C;&#x751A;&#x81F3;&#x53EF;&#x4EE5;&#x751F;&#x6210;&#x65B0;&#x7684;&#x7C7B;&#x7684;&#x5B57;&#x8282;&#x7801;&#x6587;&#x4EF6;&#x3002;</p>
+<p>ClassAdapter&#x7C7B;&#xFF1A;&#x5B9E;&#x73B0;&#x4E86;ClassVisitor&#x63A5;&#x53E3;&#x6240;&#x5B9A;&#x4E49;&#x7684;&#x6240;&#x6709;&#x51FD;&#x6570;&#xFF0C;&#x5F53;&#x65B0;&#x5EFA;&#x4E00;&#x4E2A;ClassAdapter&#x5BF9;&#x8C61;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x9700;&#x8981;&#x4F20;&#x5165;&#x4E00;&#x4E2A;&#x5B9E;&#x73B0;&#x4E86;ClassVisitor&#x63A5;&#x53E3;&#x7684;&#x5BF9;&#x8C61;&#xFF0C;&#x4F5C;&#x4E3A;&#x804C;&#x8D23;&#x94FE;&#x4E2D;&#x7684;&#x4E0B;&#x4E00;&#x4E2A;&#x8BBF;&#x95EE;&#x8005;&#xFF08;Visitor&#xFF09;&#xFF0C;&#x8FD9;&#x4E9B;&#x51FD;&#x6570;&#x7684;&#x9ED8;&#x8BA4;&#x5B9E;&#x73B0;&#x5C31;&#x662F;&#x7B80;&#x5355;&#x7684;&#x628A;&#x8C03;&#x7528;&#x59D4;&#x6D3E;&#x7ED9;&#x8FD9;&#x4E2A;&#x5BF9;&#x8C61;&#xFF0C;&#x7136;&#x540E;&#x4F9D;&#x6B21;&#x4F20;&#x9012;&#x4E0B;&#x53BB;&#x5F62;&#x6210;&#x804C;&#x8D23;&#x94FE;&#x3002;</p>
+<h4 id="&#x4F7F;&#x7528;ASM&#x589E;&#x5F3A;&#x65E2;&#x6709;&#x7C7B;&#x7684;&#x529F;&#x80FD;"><a href="#&#x4F7F;&#x7528;ASM&#x589E;&#x5F3A;&#x65E2;&#x6709;&#x7C7B;&#x7684;&#x529F;&#x80FD;" class="headerlink" title="&#x4F7F;&#x7528;ASM&#x589E;&#x5F3A;&#x65E2;&#x6709;&#x7C7B;&#x7684;&#x529F;&#x80FD;"></a>&#x4F7F;&#x7528;ASM&#x589E;&#x5F3A;&#x65E2;&#x6709;&#x7C7B;&#x7684;&#x529F;&#x80FD;</h4><p>&#x6211;&#x4EEC;&#x8FD8;&#x662F;&#x7528;&#x4E0A;&#x9762;&#x7684;&#x4F8B;&#x5B50;&#xFF0C;&#x7ED9;Account&#x7C7B;&#x52A0;&#x4E0A;Security check &#x7684;&#x529F;&#x80FD;&#x3002;&#x4E0E;Proxy&#x7F16;&#x7A0B;&#x4E0D;&#x540C;&#xFF0C;ASM&#x4E0D;&#x9700;&#x8981;&#x5C06; Account&#x58F0;&#x660E;&#x6210;&#x63A5;&#x53E3;&#xFF0C;Account&#x53EF;&#x4EE5;&#x4ECD;&#x65E7;&#x662F;&#x4E00;&#x4E2A;&#x5B9E;&#x73B0;&#x7C7B;&#x3002;ASM&#x5C06;&#x76F4;&#x63A5;&#x5728;Account&#x7C7B;&#x4E0A;&#x52A8;&#x624B;&#x672F;&#xFF0C;&#x7ED9;Account&#x7C7B;&#x7684;operation&#x65B9;&#x6CD5;&#x9996;&#x90E8;&#x52A0;&#x4E0A;&#x5BF9;SecurityChecker.checkSecurity&#x7684;&#x8C03;&#x7528;&#x3002;</p>
+<p>&#x9996;&#x5148;&#xFF0C;&#x6211;&#x4EEC;&#x5C06;&#x4ECE;ClassAdapter&#x7EE7;&#x627F;&#x4E00;&#x4E2A;&#x7C7B;&#x3002;ClassAdapter&#x662F;ASM&#x6846;&#x67B6;&#x63D0;&#x4F9B;&#x7684;&#x4E00;&#x4E2A;&#x9ED8;&#x8BA4;&#x7C7B;&#xFF0C;&#x8D1F;&#x8D23;&#x6C9F;&#x901A; ClassReader&#x548C;ClassWriter&#x3002;&#x5982;&#x679C;&#x60F3;&#x8981;&#x6539;&#x53D8;ClassReader&#x5904;&#x8BFB;&#x5165;&#x7684;&#x7C7B;&#xFF0C;&#x7136;&#x540E;&#x4ECE;ClassWriter&#x5904;&#x8F93;&#x51FA;&#xFF0C;&#x53EF;&#x4EE5;&#x91CD;&#x5199;&#x76F8;&#x5E94;&#x7684;ClassAdapter&#x51FD;&#x6570;&#x3002;&#x8FD9;&#x91CC;&#xFF0C;&#x4E3A;&#x4E86;&#x6539;&#x53D8;Account&#x7C7B;&#x7684;operation&#x65B9;&#x6CD5;&#xFF0C;&#x6211;&#x4EEC;&#x5C06;&#x91CD;&#x5199;visitMethdod&#x65B9;&#x6CD5;&#x3002;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">public class AddSecurityCheckClassAdapter extends ClassAdapter {</div><div class="line"></div><div class="line">    public AddSecurityCheckClassAdapter(ClassVisitor cv) {</div><div class="line">        super(cv);</div><div class="line">    }</div><div class="line"></div><div class="line">    // &#x91CD;&#x5199; visitMethod&#xFF0C;&#x8BBF;&#x95EE;&#x5230; &quot;operation&quot; &#x65B9;&#x6CD5;&#x65F6;&#xFF0C;&#x7ED9;&#x51FA;&#x81EA;&#x5B9A;&#x4E49; MethodVisitor&#xFF0C;&#x5B9E;&#x9645;&#x6539;&#x5199;&#x65B9;&#x6CD5;&#x5185;&#x5BB9;</div><div class="line">    @Override</div><div class="line">    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {</div><div class="line">        MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);</div><div class="line">        System.out.println(&quot;AddSecurityCheckClassAdapter;&quot; + &quot;name:&quot; + name + &quot;;desc:&quot; + desc + &quot;;signature:&quot; + signature);</div><div class="line">        MethodVisitor wrappedMv = mv;</div><div class="line">        if (mv != null) {</div><div class="line">            if (&quot;operation&quot;.equals(name)) {</div><div class="line">                // &#x4F7F;&#x7528;&#x81EA;&#x5B9A;&#x4E49;&#x7684;MethodVisitor,&#x5B9E;&#x9645;&#x6539;&#x5199;&#x65B9;&#x6CD5;&#x5185;&#x5BB9;</div><div class="line">                wrappedMv = new AddSecurityCheckMethodAdapter(mv);</div><div class="line">            }</div><div class="line">        }</div><div class="line">        return wrappedMv;</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x4E0B;&#x4E00;&#x6B65;&#x5C31;&#x662F;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A;&#x7EE7;&#x627F;&#x81EA;MethodAdapter&#x7684;AddSecurityCheckMethodAdapter&#xFF0C;&#x5728;&#x201C;operation&#x201D;&#x65B9;&#x6CD5;&#x9996;&#x90E8;&#x63D2;&#x5165;&#x5BF9;SecurityChecker.checkSecurity()&#x7684;&#x8C03;&#x7528;&#x3002;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class AddSecurityCheckMethodAdapter extends MethodAdapter {</div><div class="line"></div><div class="line">    public AddSecurityCheckMethodAdapter(MethodVisitor mv) {</div><div class="line">        super(mv);</div><div class="line">    }</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void visitCode() {</div><div class="line">        // ClassReader&#x8BFB;&#x5230;&#x6BCF;&#x4E2A;&#x65B9;&#x6CD5;&#x7684;&#x9996;&#x90E8;&#x65F6;&#x8C03;&#x7528; visitCode()&#xFF0C;&#x5728;&#x8FD9;&#x4E2A;&#x91CD;&#x5199;&#x65B9;&#x6CD5;&#x91CC;&#xFF0C;</div><div class="line">        // &#x6211;&#x4EEC;&#x7528; visitMethodInsn(Opcodes.INVOKESTATIC, &quot;com/xiongcen/asm/SecurityChecker&quot;,&quot;checkSecurity&quot;, &quot;()V&quot;);&#x63D2;&#x5165;&#x4E86;&#x5B89;&#x5168;&#x68C0;&#x67E5;&#x529F;&#x80FD;&#x3002;</div><div class="line">        visitMethodInsn(Opcodes.INVOKESTATIC, &quot;com/xiongcen/asm/SecurityChecker&quot;,</div><div class="line">                &quot;checkSecurity&quot;, &quot;()V&quot;);</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<p>&#x6700;&#x540E;&#xFF0C;&#x6211;&#x4EEC;&#x5C06;&#x96C6;&#x6210;&#x4E0A;&#x9762;&#x5B9A;&#x4E49;&#x7684;ClassAdapter&#xFF0C;ClassReader&#x548C;ClassWriter&#x4EA7;&#x751F;&#x4FEE;&#x6539;&#x540E;&#x7684;Account&#x7C7B;&#x6587;&#x4EF6; :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public static void main(String[] args) throws Exception {</div><div class="line">        // 3.&#x4F7F;&#x7528;ASM</div><div class="line">        // &#x4F7F;&#x7528; ClassReader &#x53BB;&#x8BFB;&#x53D6; Account &#x7C7B;&#x7684;&#x5B57;&#x8282;&#x7801;&#x4FE1;&#x606F;&#x3002;</div><div class="line">        ClassReader cr = new ClassReader(&quot;com.xiongcen.asm.Account&quot;);</div><div class="line">        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);</div><div class="line">        ClassAdapter classAdapter = new AddSecurityCheckClassAdapter(cw);</div><div class="line">        // &#x901A;&#x8FC7;accept&#x65B9;&#x6CD5;&#x626B;&#x63CF;&#x6574;&#x4E2A;&#x5B57;&#x8282;&#x7801;,SKIP_DEBUG&#x9009;&#x9879;&#x7684;&#x610F;&#x4E49;&#x662F;&#x5728;&#x626B;&#x63CF;&#x8FC7;&#x7A0B;&#x4E2D;&#x63A0;&#x8FC7;&#x6240;&#x6709;&#x6709;&#x5173;&#x884C;&#x53F7;&#x65B9;&#x9762;&#x7684;&#x5185;&#x5BB9;</div><div class="line">        cr.accept(classAdapter, ClassReader.SKIP_DEBUG);</div><div class="line">        byte[] data = cw.toByteArray();</div><div class="line">        File file = new File(&quot;/Users/xiongcen/Documents/IdeaProject/JniProject/out/production/JniProject/com/xiongcen/asm/Account.class&quot;);</div><div class="line">        FileOutputStream fout = new FileOutputStream(file);</div><div class="line">        fout.write(data);</div><div class="line">        fout.close();</div><div class="line"></div><div class="line">        Account account = new Account();</div><div class="line">        account.operation();</div><div class="line"></div><div class="line">    }</div></pre></td></tr></table></figure>
+<p>&#x4F7F;&#x7528;&#x8FD9;&#x4E2A; Account&#xFF0C;&#x6211;&#x4EEC;&#x4F1A;&#x5F97;&#x5230;&#x4E0B;&#x9762;&#x7684;&#x8F93;&#x51FA;&#xFF1A;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SecurityChecker.checkSecurity ... </div><div class="line">operation...</div></pre></td></tr></table></figure>
+<p>&#x6E90;&#x7801;&#x53EF;&#x53C2;&#x8003;<a href="https://github.com/xiongcen/ASMDemo" target="_blank" rel="external">ASMDemo</a></p>
+<h3 id="&#x53C2;&#x8003;"><a href="#&#x53C2;&#x8003;" class="headerlink" title="&#x53C2;&#x8003;"></a>&#x53C2;&#x8003;</h3><ol>
+<li><a href="https://www.ibm.com/developerworks/cn/java/j-lo-asm30/" target="_blank" rel="external">AOP &#x7684;&#x5229;&#x5668;&#xFF1A;ASM 3.0 &#x4ECB;&#x7ECD;</a></li>
+<li><a href="https://my.oschina.net/u/1166271/blog/162796" target="_blank" rel="external">&#x6DF1;&#x5165;&#x5B57;&#x8282;&#x7801; &#x2013; &#x4F7F;&#x7528; ASM &#x5B9E;&#x73B0; AOP</a></li>
+<li><a href="https://my.oschina.net/u/1166271/blog/163637" target="_blank" rel="external">&#x6DF1;&#x5165;&#x5B57;&#x8282;&#x7801; &#x2013; ASM &#x5173;&#x952E;&#x63A5;&#x53E3; ClassVisitor</a></li>
+<li><a href="https://my.oschina.net/u/1166271/blog/220011" target="_blank" rel="external">&#x6DF1;&#x5165;&#x5B57;&#x8282;&#x7801; &#x2013; ASM &#x5173;&#x952E;&#x63A5;&#x53E3; MethodVisitor</a></li>
+<li><a href="http://www.wangyuwei.me/2017/01/20/ASM-%E6%93%8D%E4%BD%9C%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%9D%E6%8E%A2/" target="_blank" rel="external">ASM &#x64CD;&#x4F5C;&#x5B57;&#x8282;&#x7801;&#x521D;&#x63A2;</a></li>
+<li><a href="wenku.baidu.com/view/bf486c4577232f60ddcca133.html">ASM3.0&#x4F7F;&#x7528;&#x6307;&#x5357;(&#x4E2D;&#x6587;)</a></li>
+<li><a href="download.forge.objectweb.org/asm/asm4-guide.pdf">ASM4.0&#x4F7F;&#x7528;&#x6307;&#x5357;(&#x82F1;&#x6587;)</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/04/25/ASM/" data-id="cknuhhfmn003ddwqymr143vth" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/06/05/AndroidIntentFlag/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          关于设置IntentFlag的一些总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/04/13/HTTP5-6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">(转)《图解HTTP》第5-6章笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ASM/">ASM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Dart/">Dart</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Flutter/">Flutter</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AIDL/">AIDL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Binder/">Binder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bitmap/">Bitmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Canvas/">Canvas</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ClassLoader/">ClassLoader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPC/">IPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IntentFlag/">IntentFlag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/">JVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java并发/">Java并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LaunchMode/">LaunchMode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Push/">Push</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ThreadPoolExecutor/">ThreadPoolExecutor</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/View/">View</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebView/">WebView</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/事件分发/">事件分发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内存泄露/">内存泄露</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/开源库/">开源库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/消息机制/">消息机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/阻塞队列/">阻塞队列</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AIDL/" style="font-size: 10px;">AIDL</a> <a href="/tags/Binder/" style="font-size: 10px;">Binder</a> <a href="/tags/Bitmap/" style="font-size: 15px;">Bitmap</a> <a href="/tags/Canvas/" style="font-size: 10px;">Canvas</a> <a href="/tags/ClassLoader/" style="font-size: 10px;">ClassLoader</a> <a href="/tags/HTTP/" style="font-size: 12.5px;">HTTP</a> <a href="/tags/IPC/" style="font-size: 12.5px;">IPC</a> <a href="/tags/IntentFlag/" style="font-size: 10px;">IntentFlag</a> <a href="/tags/JVM/" style="font-size: 10px;">JVM</a> <a href="/tags/Java并发/" style="font-size: 12.5px;">Java并发</a> <a href="/tags/LaunchMode/" style="font-size: 10px;">LaunchMode</a> <a href="/tags/Network/" style="font-size: 17.5px;">Network</a> <a href="/tags/Push/" style="font-size: 10px;">Push</a> <a href="/tags/ThreadPoolExecutor/" style="font-size: 10px;">ThreadPoolExecutor</a> <a href="/tags/View/" style="font-size: 15px;">View</a> <a href="/tags/WebView/" style="font-size: 10px;">WebView</a> <a href="/tags/事件分发/" style="font-size: 10px;">事件分发</a> <a href="/tags/内存泄露/" style="font-size: 10px;">内存泄露</a> <a href="/tags/开源库/" style="font-size: 20px;">开源库</a> <a href="/tags/消息机制/" style="font-size: 10px;">消息机制</a> <a href="/tags/阻塞队列/" style="font-size: 10px;">阻塞队列</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/04/19/Activity黑屏分析/">Activity黑屏分析</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/10/深入理解Binder/">深入理解Binder</a>
+          </li>
+        
+          <li>
+            <a href="/2020/09/01/dart-async/">Dart的单线程模型&amp;异步操作</a>
+          </li>
+        
+          <li>
+            <a href="/2020/09/01/flutter-thread-model/">Flutter线程模型</a>
+          </li>
+        
+          <li>
+            <a href="/2020/09/01/flutter-booting/">深入理解Flutter引擎启动</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 xiongcen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
